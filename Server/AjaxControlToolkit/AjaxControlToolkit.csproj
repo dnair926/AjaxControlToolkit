@@ -190,9 +190,16 @@
     <Compile Include="Calendar\CalendarDesigner.cs" />
     <Compile Include="Calendar\CalendarExtender.cs" />
     <Compile Include="Calendar\CalendarPosition.cs" />
+    <Compile Include="CapsLock\CapsLockExtender.cs" />
     <Compile Include="CascadingDropDown\CascadingDropDownDesigner.cs" />
     <Compile Include="CascadingDropDown\CascadingDropDownExtender.cs" />
     <Compile Include="CascadingDropDown\CascadingDropDownNameValue.cs" />
+    <Compile Include="CharCount\CharCountDesigner.cs" />
+    <Compile Include="CharCount\CharCountExtender.cs" />
+    <Compile Include="CharCount\CharCountPosition.cs" />
+    <Compile Include="ClientSide\ClientSideDesigner.cs" />
+    <Compile Include="ClientSide\ClientSideExtender.cs" />
+    <Compile Include="ClientSide\ClientSideTargetControlType.cs" />
     <Compile Include="CollapsiblePanel\CollapsiblePanelDesigner.cs" />
     <Compile Include="CollapsiblePanel\CollapsiblePanelExpandDirection.cs" />
     <Compile Include="CollapsiblePanel\CollapsiblePanelExtender.cs" />
@@ -489,6 +496,11 @@
     <Compile Include="ValidatorCallout\ValidatorCalloutDesigner.cs" />
     <Compile Include="ValidatorCallout\ValidatorCalloutExtender.cs" />
     <Compile Include="ValidatorCallout\ValidatorCalloutPosition.cs" />
+    <Compile Include="Visibility\VisibilityAction.cs" />
+    <Compile Include="Visibility\VisibilityControlType.cs" />
+    <Compile Include="Visibility\VisibilityDesigner.cs" />
+    <Compile Include="Visibility\VisibilityExpandDirection.cs" />
+    <Compile Include="Visibility\VisibilityExtender.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BalloonPopup\BalloonPopup.ico" />
@@ -513,6 +525,8 @@
     <Content Include="BarChart\BarChart.pre.js" />
     <Content Include="BubbleChart\BubbleChart.css" />
     <Content Include="BubbleChart\BubbleChart.pre.js" />
+    <Content Include="CapsLock\CapsLock_resource.css" />
+    <Content Include="CharCount\CharCount_resource.css" />
     <Content Include="LineChart\LineChart.css" />
     <Content Include="LineChart\LineChart.pre.js" />
     <Content Include="PieChart\PieChart.css" />

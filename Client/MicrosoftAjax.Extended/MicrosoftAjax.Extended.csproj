@@ -32,7 +32,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
-	<ScriptOutput>$(SolutionDir)\Client\ScriptOutput\extended</ScriptOutput>
+    <ScriptOutput>$(SolutionDir)\Client\ScriptOutput\extended</ScriptOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -92,7 +92,16 @@
     <Content Include="Calendar\arrow-right.gif" />
     <Content Include="Calendar\Calendar.css" />
     <Content Include="Calendar\CalendarBehavior.pre.js" />
+    <Content Include="CapsLock\alert-large.gif" />
+    <Content Include="CapsLock\alert-small.gif" />
+    <Content Include="CapsLock\CapsLock.css" />
+    <Content Include="CapsLock\CapsLock.ico" />
+    <Content Include="CapsLock\CapsLockBehavior.pre.js" />
+    <Content Include="CapsLock\close.gif" />
     <Content Include="CascadingDropDown\CascadingDropDownBehavior.pre.js" />
+    <Content Include="CharCount\CharCount.css" />
+    <Content Include="CharCount\CharCountBehavior.pre.js" />
+    <Content Include="ClientSide\ClientSideBehavior.pre.js" />
     <Content Include="CollapsiblePanel\CollapsiblePanelBehavior.pre.js" />
     <Content Include="ColorPicker\ColorPicker.css" />
     <Content Include="ColorPicker\ColorPickerBehavior.pre.js" />
@@ -335,6 +344,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Visibility\VisibilityBehavior.pre.js" />
     <Content Include="web.config" />
     <Content Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
@@ -404,7 +414,7 @@
     <ItemGroup>
       <JS Include="$(ScriptOutput)\**\*.js" Exclude="$(ScriptOutput)\**\*.debug.*" />
     </ItemGroup>
-	<AjaxMin JSSourceFiles="@(JS)" JSSourceExtensionPattern="\.js$" JSTargetExtension=".js" JSCollapseToLiteral="true" JSLocalRenaming="CrunchAll" JSMacSafariQuirks="true" JSRemoveUnneededCode="true" JSStripDebugStatements="true" JSEvalTreatment="Ignore" JSInlineSafeStrings="true" />
+    <AjaxMin JSSourceFiles="@(JS)" JSSourceExtensionPattern="\.js$" JSTargetExtension=".js" JSCollapseToLiteral="true" JSLocalRenaming="CrunchAll" JSMacSafariQuirks="true" JSRemoveUnneededCode="true" JSStripDebugStatements="true" JSEvalTreatment="Ignore" JSInlineSafeStrings="true" />
     <PrependTask Text="// (c) 2010 CodePlex Foundation" SourceFiles="@(JS)" />
     <!-- Copy Images and CSS directly into script output -->
     <ItemGroup>

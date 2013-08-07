@@ -1,0 +1,13 @@
+﻿.ajax__capsLock div, .ajax__capsLock td {border:solid 1px Black;background-color:#fffaf0;}
+.ajax__capsLock .ajax__capsLock_popup_table {display:none;border:none;background-color:transparent;padding:0px;}
+.ajax__capsLock .ajax__capsLock_popup_table_row {vertical-align:top;height:100%;background-color:transparent;padding:0px;}
+.ajax__capsLock .ajax__capsLock_callout_cell {width:20px;height:100%;text-align:right;vertical-align:top;border:none;background-color:transparent;padding:0px;}
+.ajax__capsLock .ajax__capsLock_callout_table {height:100%;border:none;background-color:transparent;padding:0px;}
+.ajax__capsLock .ajax__capsLock_callout_table_row {background-color:transparent;padding:0px;}
+.ajax__capsLock .ajax__capsLock_callout_arrow_cell {padding:8px 0px 0px 0px;width:20px;text-align:right;vertical-align:top;font-size:1px;border:none;background-color:transparent;}
+.ajax__capsLock .ajax__capsLock_callout_arrow_cell .ajax__capsLock_innerdiv {font-size:1px;position:relative;left:1px;border-bottom:none;border-right:none;border-left:none;width:15px;background-color:transparent;padding:0px;}
+.ajax__capsLock .ajax__capsLock_callout_arrow_cell .ajax__capsLock_innerdiv div {height:1px;overflow:hidden;border-top:none;border-bottom:none;border-right:none;padding:0px;margin-left:auto;}
+.ajax__capsLock .ajax__capsLock_error_message_cell {font-family:Verdana;font-size:10px;padding:5px;border-right:none;border-left:none;width:100%;font-weight:bold;}
+.ajax__capsLock .ajax__capsLock_icon_cell {width:20px;padding:5px;border-right:none;}
+.ajax__capsLock .ajax__capsLock_close_button_cell {vertical-align:top;padding:0px;text-align:right;border-left:none;}
+.ajax__capsLock .ajax__capsLock_close_button_cell .ajax__capsLock_innerdiv {border:none;text-align:center;width:10px;padding:2px;cursor:pointer;}

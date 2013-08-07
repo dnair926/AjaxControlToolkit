@@ -13,6 +13,9 @@
     <siteMapNode url="~/BarChart/BarChart.aspx" title="BarChart" />
     <siteMapNode url="~/BubbleChart/BubbleChart.aspx" title="BubbleChart" />
     <siteMapNode url="~/Calendar/Calendar.aspx" title="Calendar" />
+    <siteMapNode url="~/CapsLock/CapsLock.aspx" title="CapsLock" />
+    <siteMapNode url="~/CharCount/CharCount.aspx" title="CharCount" />
+    <siteMapNode url="~/ClientSide/ClientSide.aspx" title="ClientSide" />
     <siteMapNode url="~/CascadingDropDown/CascadingDropDown.aspx" title="CascadingDropDown" />
     <siteMapNode url="~/CollapsiblePanel/CollapsiblePanel.aspx" title="CollapsiblePanel" />
     <siteMapNode url="~/ColorPicker/ColorPicker.aspx" title="ColorPicker" />
@@ -52,5 +55,6 @@
     <siteMapNode url="~/Twitter/Twitter.aspx" title="Twitter" />
     <siteMapNode url="~/UpdatePanelAnimation/UpdatePanelAnimation.aspx" title="UpdatePanelAnimation" />
     <siteMapNode url="~/ValidatorCallout/ValidatorCallout.aspx" title="ValidatorCallout" />
+    <siteMapNode url="~/Visibility/Visibility.aspx" title="Visibility" />
   </siteMapNode>
 </siteMap>
