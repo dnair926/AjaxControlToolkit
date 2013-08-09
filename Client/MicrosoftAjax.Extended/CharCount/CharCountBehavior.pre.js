@@ -42,6 +42,7 @@ Sys.Extended.UI.CharCountBehavior.prototype = {
     get_showDelay: function () {
         return this._showDelay;
     },
+
     set_showDelay: function (value) {
         if (this._showDelay != value) {
             this._showDelay = value;
