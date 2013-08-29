@@ -8,11 +8,29 @@ using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+//---------------------------------------------------------------------------------------------------------------
+// Added Functionalities: DN: 8/19/13
+//  1. Set the value of selected item to a hidden field.
+//  2. Clear the value of targetcontrol when a value is entered manually instead of selecting from auto-complete.
+//  3. Show background images on the targetcontrol which will inform users how many characters to enter for search and when searching is being done.
+//  4. Raise post back on the value hidden field when an item is selected.
+//  5. Disable seletion from the auto-complete list.
+//  6. Style the alternating items in auto-complete.
+//  7. Be able to show different text in the list and in the targetcontrol.
+//  8. Prevent the selection of default text. (Text shown when no results found for the search criteria.)
+//  9. Raise a client-side event on page_load to run any custom client-side javascript functions.
+//---------------------------------------------------------------------------------------------------------------
+
 [assembly: System.Web.UI.WebResource("AutoComplete.AutoCompleteBehavior.js", "text/javascript")]
 [assembly: System.Web.UI.WebResource("AutoComplete.AutoCompleteBehavior.debug.js", "text/javascript")]
 [assembly: System.Web.UI.WebResource("PopupControl.PopupControlBehavior.js", "text/javascript")]
 [assembly: System.Web.UI.WebResource("PopupControl.PopupControlBehavior.debug.js", "text/javascript")]
-
+//-----------------------------------------------------------------------------------------------------
+//-- DN: 8/19: Images for autocomplete
+[assembly: System.Web.UI.WebResource("AutoComplete.AutoCompleteBackground.png", "img/png")]
+[assembly: System.Web.UI.WebResource("AutoComplete.AutoComplete_Searching.gif", "img/gif")]
+[assembly: System.Web.UI.WebResource("AutoComplete.AutoComplete.css", "text/css", PerformSubstitution = true)]
+//-----------------------------------------------------------------------------------------------------
 namespace AjaxControlToolkit
 {
     /// <summary>
@@ -29,6 +47,109 @@ namespace AjaxControlToolkit
     [ToolboxBitmap(typeof(AutoCompleteExtender), "AutoComplete.AutoComplete.ico")]
     public class AutoCompleteExtender : AnimationExtenderControlBase
     {
+
+        //-----------------------------------------------------------------------------------------------------
+        //-- DN: 8/19: New properties for autocomplete
+
+        /// <summary>
+        /// Specify whether to Raise Postback when value selected.
+        /// </summary>
+        [DefaultValue(false)]
+        [ExtenderControlProperty]
+        [ClientPropertyName("postbackOnItemSelected")]
+        public virtual bool PostbackOnItemSelected
+        {
+            get { return GetPropertyValue("PostbackOnItemSelected", false); }
+            set { SetPropertyValue("PostbackOnItemSelected", value); }
+        }
+
+        /// <summary>
+        /// ID of element where the value of selected item will be set.
+        /// </summary>
+        [DefaultValue("")]
+        [ExtenderControlProperty]
+        [IDReferenceProperty(typeof(HiddenField))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Following ASP.NET AJAX pattern")]
+        public virtual string ValueHiddenFieldID
+        {
+            get { return GetPropertyValue("ValueHiddenFieldID", String.Empty); }
+            set { SetPropertyValue("ValueHiddenFieldID", value); }
+        }
+
+        /// <summary>
+        /// ID of element where the text of the selected item will be set, in addition to the TargetControl
+        /// </summary>
+        [DefaultValue("")]
+        [ExtenderControlProperty]
+        [IDReferenceProperty(typeof(HiddenField))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Following ASP.NET AJAX pattern")]
+        public virtual string TextHiddenFieldID
+        {
+            get { return GetPropertyValue("TextHiddenFieldID", String.Empty); }
+            set { SetPropertyValue("TextHiddenFieldID", value); }
+        }
+
+        /// <summary>
+        /// URL of image that is shown when an empty target control gets focus. It informs the user that box is an auto-complete box and about the MinPrefixLength value.
+        /// </summary>
+        [UrlProperty]
+        [ExtenderControlProperty]
+        [TypeConverter(typeof(ServicePathConverter))]
+        [ClientPropertyName("infoImageUrl")]
+        public virtual string InfoImageUrl
+        {
+            get { return GetPropertyValue("InfoImageUrl", (string)null) ?? (DesignMode ? "" : Page.ClientScript.GetWebResourceUrl(typeof(ValidatorCalloutExtender), "AutoComplete.AutoCompleteBackground.png")); }
+            set { SetPropertyValue("InfoImageUrl", value); }
+        }
+
+        /// <summary>
+        /// URL of image that is shown when the web service is called to fetch results.
+        /// </summary>
+        [UrlProperty]
+        [ExtenderControlProperty]
+        [TypeConverter(typeof(ServicePathConverter))]
+        [ClientPropertyName("searchImageUrl")]
+        public virtual string SearchImageUrl
+        {
+            get { return GetPropertyValue("SearchImageUrl", (string)null) ?? (DesignMode ? "" : Page.ClientScript.GetWebResourceUrl(typeof(ValidatorCalloutExtender), "AutoComplete.AutoComplete_Searching.gif")); }
+            set { SetPropertyValue("SearchImageUrl", value); }
+        }
+
+        /// <summary>
+        /// Flag to specify whether selection from the auto-complete list is allowed.
+        /// </summary>
+        [DefaultValue(true)]
+        [ExtenderControlProperty]
+        [ClientPropertyName("enableSelection")]
+        public virtual bool EnableSelection
+        {
+            get { return GetPropertyValue("EnableSelection", true); }
+            set { SetPropertyValue("EnableSelection", value); }
+        }
+        /// <summary>
+        /// Handler to attach to the client-side itemSelected event
+        /// </summary>
+        [DefaultValue("")]
+        [ExtenderControlEvent]
+        [ClientPropertyName("valueChanged")]
+        public string OnValueChanged
+        {
+            get { return GetPropertyValue("OnValueChanged", string.Empty); }
+            set { SetPropertyValue("OnValueChanged", value); }
+        }
+        /// <summary>
+        /// Css Class that will be used to style alternating item in the autocomplete list.
+        /// </summary>
+        [DefaultValue("")]
+        [ExtenderControlProperty]
+        [ClientPropertyName("completionListAltItemCssClass")]
+        public string CompletionListAltItemCssClass
+        {
+            get { return GetPropertyValue("CompletionListAltItemCssClass", ""); }
+            set { SetPropertyValue("CompletionListAltItemCssClass", value); }
+        }
+        //-----------------------------------------------------------------------------------------------------
+
         /// <summary>
         /// Minimum length of text before the webservice provides suggestions.
         /// </summary>

@@ -80,7 +80,9 @@
     <Content Include="AlwaysVisibleControl\AlwaysVisibleControlBehavior.pre.js" />
     <Content Include="Animation\AnimationBehavior.pre.js" />
     <Content Include="Animation\Animations.pre.js" />
+    <Content Include="AutoComplete\AutoCompleteBackground.png" />
     <Content Include="AutoComplete\AutoCompleteBehavior.pre.js" />
+    <Content Include="AutoComplete\AutoComplete_Searching.gif" />
     <Content Include="BalloonPopup\BalloonPopupExtenderBehavior.pre.js" />
     <Content Include="BalloonPopup\Cloud\BalloonPopup.css" />
     <Content Include="BalloonPopup\Cloud\sprite.gif" />

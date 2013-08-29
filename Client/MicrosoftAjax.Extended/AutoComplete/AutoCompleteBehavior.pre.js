@@ -72,7 +72,19 @@ Sys.Extended.UI.AutoCompleteBehavior = function(element) {
     this._showOnlyCurrentWordInCompletionListItem = false;
     // WebRequest object returned from WebServiceProxy.invoke
     this._webRequest = null;  
-    
+
+    //START------------------------------------------------------------------------
+    // DN: 8/19/13 New Variables
+    this._keyUpHandler = null;
+    this._infoImageUrl = null;
+    this._searchImageUrl = null;
+    this._postbackOnItemSelected = false;
+    this._enableSelection = true;
+    this._ValueHiddenFieldID = null;
+    this._TextHiddenFieldID = null;
+    this._completionListAltItemCssClass = null;
+    //END------------------------------------------------------------------------
+
 }
 Sys.Extended.UI.AutoCompleteBehavior.prototype = {
     initialize: function() {
@@ -88,6 +100,10 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         this._focusHandler = Function.createDelegate(this, this._onGotFocus);
         this._blurHandler = Function.createDelegate(this, this._onLostFocus);
         this._keyDownHandler = Function.createDelegate(this, this._onKeyDown);
+        //START------------------------------------------------------------------------
+        // DN: 8/19/13
+        this._keyUpHandler = Function.createDelegate(this, this._onKeyUp);
+        //END------------------------------------------------------------------------
         this._mouseDownHandler = Function.createDelegate(this, this._onListMouseDown);
         this._mouseUpHandler = Function.createDelegate(this, this._onListMouseUp);
         this._mouseOverHandler = Function.createDelegate(this, this._onListMouseOver);
@@ -127,6 +143,11 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         if (this._onHideJson) {
             this._popupBehavior.set_onHide(this._onHideJson);
         }
+
+        //START---------------------------------------------------------------------
+        // DN: 8/19/2013    Raise the ItemPopulated event to initialize all controls.
+        this.raiseValueChanged(new Sys.Extended.UI.AutoCompleteItemEventArgs(this, null, null));
+        //END---------------------------------------------------------------------
     },
 
     dispose: function() {
@@ -154,9 +175,15 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
             $removeHandler(element, "focus", this._focusHandler);
             $removeHandler(element, "blur", this._blurHandler);
             $removeHandler(element, "keydown", this._keyDownHandler);
-            $removeHandler(this._completionListElement, 'blur', this._completionListBlurHandler);
-            $removeHandler(this._completionListElement, 'mousedown', this._mouseDownHandler);
-            $removeHandler(this._completionListElement, 'mouseup', this._mouseUpHandler);
+            //START---------------------------------------------------------------------
+            // DN: 8/19/13  Remove new handlers
+            $removeHandler(element, "keyup", this._keyUpHandler);
+            if (this._enableSelection) {
+                $removeHandler(this._completionListElement, 'blur', this._completionListBlurHandler);
+                $removeHandler(this._completionListElement, 'mousedown', this._mouseDownHandler);
+                $removeHandler(this._completionListElement, 'mouseup', this._mouseUpHandler);
+            }
+            //END---------------------------------------------------------------------
             $removeHandler(this._completionListElement, 'mouseover', this._mouseOverHandler);
         }
         if (this._bodyClickHandler) {
@@ -169,6 +196,10 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         this._focusHandler = null;
         this._blurHandler = null;
         this._keyDownHandler = null;
+        //START---------------------------------------------------------------------
+        // DN: 8/19/13  set handler to null
+        this._keyUpHandler = null;
+        //END---------------------------------------------------------------------
         this._completionListBlurHandler = null;
         this._mouseDownHandler = null;
         this._mouseUpHandler = null;
@@ -197,6 +228,10 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         $addHandler(element, "focus", this._focusHandler);
         $addHandler(element, "blur", this._blurHandler);
         $addHandler(element, "keydown", this._keyDownHandler);
+        //START---------------------------------------------------------------------
+        // DN: 8/19/13 add keyup handler
+        $addHandler(element, "keyup", this._keyUpHandler);
+        //END---------------------------------------------------------------------
     },
 
     initializeCompletionList: function(element) {
@@ -227,10 +262,20 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
                 completionListStyle.color = this._textColor;
             }
         }
-        $addHandler(element, "mousedown", this._mouseDownHandler);
-        $addHandler(element, "mouseup", this._mouseUpHandler);
+        //START-------------------------------------------------------------------------------------------
+        // DN: 8/19/13 --> Do no add mousedown and mouseup events on the results list if selection is not enabled.
+        if (this._enableSelection) {
+            $addHandler(element, "mousedown", this._mouseDownHandler);
+            $addHandler(element, "mouseup", this._mouseUpHandler);
+        }
+        //END-------------------------------------------------------------------------------------------
         $addHandler(element, "mouseover", this._mouseOverHandler);
-        $addHandler(element, "blur", this._completionListBlurHandler);
+        //START-------------------------------------------------------------------------------------------
+        // DN: 8/19/13 --> Do no add blur event on the results list if selection is not enabled.
+        if (this._enableSelection) {
+            $addHandler(element, "blur", this._completionListBlurHandler);
+        }
+        //END-------------------------------------------------------------------------------------------
         $addHandler(document.body, 'click', this._bodyClickHandler);
     },
 
@@ -435,7 +480,21 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
     /// <param name="ev" type="Sys.UI.DomEvent" DomElement="false" mayBeNull="false" />
     /// <returns />    
     _onCompletionListBlur: function(ev) {
-        this._hideCompletionList();
+        //START---------------------------------------------------------------------
+        // DN: 8/19/13 --> if selection is disabled, then hide the completion list only when user clicks outside the textbox and the list.
+        if (this._enableSelection) {
+            this._hideCompletionList();
+        } else if ((ev.target.tagName !== 'LI') && (ev.target.id !== this.get_element().id)) {
+            //If selection is disabled, then do not hide the popup when user clicks on completion list or textbox.
+            //It will be hid only if user clicks outside the textbox or the completion list.
+            this._hideCompletionList();
+        } else {
+            this._flyoutHasFocus = true;
+        }
+        if (!this._flyoutHasFocus) {
+            this._checkIfValueSelected();
+        }
+        //END---------------------------------------------------------------------
     },
 
     _onListMouseDown: function(ev) {
@@ -486,9 +545,22 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         /// Handler for textbox focus event.
         /// </summary>
         /// <param name="ev" type="Sys.UI.DomEvent" DomElement="false" mayBeNull="false" />
-        /// <returns />      
+        /// <returns />    
+
+        //START-----------------------------------------------------------------
+        // DN: 8/19/2013 --> set the info image in background when textbox gets the focus.
+        var text = this._currentCompletionWord();
+        if (text === '') {
+            this._setElementBackground(this.get_infoImageUrl());
+        }
+        //END-----------------------------------------------------------------
+
         this._textBoxHasFocus = true;
-        if (this._flyoutHasFocus) {
+
+        //START-----------------------------------------------------------------
+        // DN: 8/19/2013 --> hide the flyout when textbox gets focus only if selection is enabled.
+        if (this._flyoutHasFocus && this._enableSelection) {
+        //END-----------------------------------------------------------------
             // hide the flyout now that the focus is back on the textbox
             this._hideCompletionList();
         }
@@ -500,6 +572,39 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         }
     },
 
+    //START-----------------------------------------------------------------
+    _onKeyUp: function (ev) {
+        var control = this.get_element();
+        if (control) {
+            var text = this._currentCompletionWord();
+            var myKeyCode = 0;
+
+            if (document.all) {
+                // Internet Explorer 4+
+                myKeyCode = ev.keyCode;
+            } else if (document.getElementById) {
+                // Mozilla / Opera / etc.
+                myKeyCode = ev.which;
+            }
+
+            //Only Show image if the key pressed is not: an arrow button, or Enter
+            //Thanks to Dmitry for doing his scrolling with arrow buttons and selecting by hitting Enter.
+            if ((myKeyCode != 13) && ((myKeyCode < 37) || (myKeyCode > 40))) {
+                if (text.trim().length < this._minimumPrefixLength) {
+                    this._setElementBackground(this.get_infoImageUrl()); //Text length is less than the MinimumPrefixLength. 
+                } else {
+                    if (this._currentPrefix !== text) {
+                        this._setElementBackground(this.get_searchImageUrl()); //Text length is greater than or equal to MinimumPrefixLength and Text is different from one ran last time.
+                    } else {
+                        this._setElementBackground(''); //Text length is greater than or equal to MinimumPrefixLength and Text is same as the last one.
+                    }
+                }
+            } else {
+                this._setElementBackground('');
+            }
+        }
+    },
+    //END-----------------------------------------------------------------
     _onKeyDown: function(ev) {
         /// <summary>
         /// Handler for the textbox keydown event.
@@ -538,7 +643,12 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         }
         else if (k === Sys.UI.Key.enter) {
             if (this._selectIndex !== -1) {
-                this._setText(this._completionListElement.childNodes[this._selectIndex]);
+                //START---------------------------------------------------------------------------
+                // DN 8/19/13 : Only set text on enter if selection is enabled.
+                if (this._enableSelection) {
+                    this._setText(this._completionListElement.childNodes[this._selectIndex]);
+                }
+                //END---------------------------------------------------------------------------
                 ev.preventDefault();
             } else {
                 // close the popup
@@ -546,7 +656,10 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
             }
         }
         else if (k === Sys.UI.Key.tab) {
-            if (this._selectIndex !== -1) {
+            //START---------------------------------------------------------------------------
+            /// DN 8/19/13 : Only set text, if selection is enabled.
+            if (this._selectIndex !== -1 && this._enableSelection) {
+            //END---------------------------------------------------------------------------
                 this._setText(this._completionListElement.childNodes[this._selectIndex]);
             }
         }
@@ -600,6 +713,10 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
                 }
                 // the textbox lost focus and the flyout does not have it
                 this._hideCompletionList();
+                //START---------------------------------------------------------------------
+                // DN 8/19/13 : If everything lost focus, then check if a valid value is selected from the autocomplete list.
+                this._checkIfValueSelected();
+                //END---------------------------------------------------------------------
             } else {
                 // keep the flyout around otherwise
             }
@@ -617,6 +734,11 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         this method after a minor delay to ensure we do not close the flyout 
         if a user clicks on its scroll bars for example */
         window.setTimeout(Function.createDelegate(this, this._handleFlyoutFocus), 500);
+        
+        //START-----------------------------------------------------------------
+        /// DN 8/19/13 : When textbox loses focus, clear any background that was set on the target control.
+        this._setElementBackground('');
+        //END-----------------------------------------------------------------
     },
 
     _onMethodComplete: function(result, context) {
@@ -726,7 +848,111 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         this._hideCompletionList();
     },
 
-    _update: function(prefixText, completionItems, cacheResults) {
+    //START---------------------------------------------------------------------
+    // DN 8/19/13: functions to set text, set background and to check if valid value selected.
+    _setText: function (item) {
+        /// <summary>
+        /// Method to set the selected autocomplete option on the textbox
+        /// </summary>
+        /// <param name="item" type="Sys.UI.DomElement" DomElement="true" mayBeNull="true">
+        /// Item to select
+        /// </param>
+        /// <returns />
+
+        var text = (value === '') ? '' : ((item && item.firstChild) ? item.firstChild.nodeValue : '');
+        var value = item ? item._value : '';
+        var disText = (value === '') ? '' : (item ? item._title : '');
+        var myId = this.get_id();
+        var element = this.get_element();
+        var control = element.control;
+
+        var textHiddenFieldId = this._TextHiddenFieldID;
+        if (textHiddenFieldId === null) {
+            textHiddenFieldId = myId + 'Text';
+        }
+        var textHiddenField = $get(textHiddenFieldId);
+
+        var valueHiddenFieldId = this._ValueHiddenFieldID;
+        if (valueHiddenFieldId === null) {
+            valueHiddenFieldId = myId + 'Value';
+        }
+        var valueHiddenField = $get(valueHiddenFieldId);
+
+        this._timer.set_enabled(false);
+
+        if (control && control.set_text) {
+            control.set_text(disText);
+            $common.tryFireEvent(control, "change");
+        } else {
+            element.value = disText;
+            $common.tryFireEvent(element, "change");
+        }
+        if (text !== '') {
+            this.raiseItemSelected(new Sys.Extended.UI.AutoCompleteItemEventArgs(item, disText, item ? item._value : null));
+        }
+
+        this._currentPrefix = this._currentCompletionWord();
+
+        this._hideCompletionList();
+        if (textHiddenField) { // set the text to the hidden field
+            textHiddenField.value = disText;
+        }
+
+        if (valueHiddenField) { // set the value to the hidden field
+            if (valueHiddenField.value != value) {
+                valueHiddenField.value = value;
+                if (this.get_postbackOnItemSelected()) {
+                    __doPostBack(valueHiddenFieldId, 'ValueChanged');
+                } else { //If not raising postback, then raise client events
+                    $common.tryFireEvent(valueHiddenField, "change");
+                }
+            }
+        }
+        //Raise the valuechanged event to reflect the changes for value change
+        this.raiseValueChanged(new Sys.Extended.UI.AutoCompleteItemEventArgs(this, null, null));
+
+    },
+
+    _setElementBackground: function (imageUrl) {
+        var control = this.get_element();
+        if (control) {
+            if (imageUrl === '')
+                control.style.backgroundImage = '';
+            else {
+                control.style.backgroundImage = 'url(' + imageUrl + ')';
+                control.style.backgroundRepeat = 'no-repeat';
+                control.style.backgroundPosition = 'right';
+            }
+        }
+    },
+    _checkIfValueSelected: function () {
+        var element = this.get_element();
+        if (element) {
+            var myId = this.get_id();
+            var elementValue = element.value;
+
+            var textHiddenFieldId = this._TextHiddenFieldID;
+            if (textHiddenFieldId === null) {
+                textHiddenFieldId = myId + 'Text';
+            }
+            var textHiddenField = $get(textHiddenFieldId);
+
+            var valueHiddenFieldId = this._ValueHiddenFieldID;
+            if (valueHiddenFieldId === null) {
+                valueHiddenFieldId = myId + 'Value';
+            }
+            var valueHiddenField = $get(valueHiddenFieldId);
+
+            if (valueHiddenField && valueHiddenField.value === '0') {
+                this._setText(null);
+            } else if (textHiddenField && elementValue !== textHiddenField.value) { //If the value in textbox and hidden field dont' match clear all values.
+                this._setText(null);
+            }
+        }
+    },
+    //END----------------------------------------------------
+
+    _update: function (prefixText, completionItems, cacheResults) {
         /// <summary>
         /// Method to update the status of the autocomplete behavior
         /// </summary>
@@ -749,12 +975,30 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
             return;
         }
 
+        //START------------------------------------------------------- 
+        // DN 8/19/13 : If value is cleared, then info image will be shown, so do not clear the Background.
+        if (prefixText !== '')
+            this._setElementBackground('');
+        //END-------------------------------------------------------           
+
         if (completionItems && completionItems.length) {
             this._completionListElement.innerHTML = '';
             this._selectIndex = -1;
             var _firstChild = null;
             var text = null;
             var value = null;
+            //START------------------------------------------------------- 
+            // DN 8/19/13 : 
+            // dispText = This is to handle the functionality to display different text in flyout and in textbox (when selected)
+            // error = This will be used to stop serialization on any consecutive items if one item fails. (for performance)
+            var dispText = null;
+            var error = false;
+
+            //If Alt Item css class is not provided, use Item css class
+            if (!this.get_completionListAltItemCssClass()) {
+                this.set_completionListAltItemCssClass(this.get_completionListItemCssClass());
+            }
+            //END-------------------------------------------------------           
 
             for (var i = 0; i < completionItems.length; i++) {
                 // Create the item                
@@ -775,19 +1019,49 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
                 try {
                     var pair = Sys.Serialization.JavaScriptSerializer.deserialize('(' + completionItems[i] + ')');
                     if (pair && pair.First) {
+
+                        //START------------------------------------------------------- 
+                        // DN 8/19/13 : Handle the logic to parse out the display text and 
+                        var pairText = null;
+
                         // Use the text and value pair returned from the web service
-                        text = pair.First;
+                        //If this crashes once, do not go in again for any other item. This is to prevent performance issues when the text is not serialized 
+                        //and also to figure out easily where the error is happening.
+                        if (!error) {
+                            try {
+                                pairText = Sys.Serialization.JavaScriptSerializer.deserialize('(' + pair.First + ')');
+                            } catch (ex) {
+                                error = true;
+                            }
+                        }
+                        if (pairText && pairText.First) {
+                            text = pairText.First;
+                            dispText = pairText.Second;
+                        } else {
+                            text = pair.First;
+                            dispText = pair.First;
+                        }
+                        //text = pair.First;
                         value = pair.Second;
+                        //END------------------------------------------------------- 
                     }
                     else {
                         // If the web service only returned a regular string, use it for
                         // both the text and the value
                         text = completionItems[i];
                         value = text;
+                        //START------------------------------------------------------- 
+                        // DN 8/19/13 :
+                        dispText = pair;
+                        //END------------------------------------------------------- 
                     }
                 } catch (ex) {
                     text = completionItems[i];
                     value = completionItems[i];
+                    //START------------------------------------------------------- 
+                    // DN 8/19/13 :
+                    dispText = completionItems[i];
+                    //END------------------------------------------------------- 
                 }
 
 
@@ -797,9 +1071,23 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
                 itemElement.appendChild(document.createTextNode(optionText));
                 itemElement._value = value;
                 itemElement.__item = '';
+                //START------------------------------------------------------- 
+                // DN 8/19/13 :
+                itemElement._title = dispText;
+                //END------------------------------------------------------- 
 
-                if (this._completionListItemCssClass) {
+                //START------------------------------------------------------- 
+                // DN 8/19/13 : To find the alternate item to set the alternate item style.
+                var isEven = (i % 2 == 0);
+                //END------------------------------------------------------- 
+
+                //START------------------------------------------------------- 
+                // DN 8/19/13 : Handle alternate item style.
+                if (isEven && this._completionListItemCssClass) {
                     Sys.UI.DomElement.addCssClass(itemElement, this._completionListItemCssClass);
+                } else if ((!isEven && this._completionListAltItemCssClass) || this._completionListItemCssClass) {
+                    Sys.UI.DomElement.addCssClass(itemElement, this._completionListAltItemCssClass);
+                //END------------------------------------------------------- 
                 } else {
                     var itemElementStyle = itemElement.style;
                     itemElementStyle.padding = '0px';
@@ -1037,6 +1325,102 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         }
     },
 
+    //START----------------------------------------------------------------------------
+    // DN 8/19/13 : properties
+    get_postbackOnItemSelected: function () {
+        /// <value type="Boolean" maybeNull="false">
+        /// Specify whether to raise postback when value selected.
+        /// </value>
+        return this._postbackOnItemSelected;
+    },
+    set_postbackOnItemSelected: function (value) {
+        if (this._postbackOnItemSelected != value) {
+            this._postbackOnItemSelected = value;
+            this.raisePropertyChanged('postbackOnItemSelected');
+        }
+    },
+
+    get_enableSelection: function () {
+        /// <value type="Boolean" maybeNull="true">
+        /// Get or sets whether suggestions retrieved from the webservice
+        /// should be cached.
+        /// </value>
+        return this._enableSelection;
+    },
+    set_enableSelection: function (value) {
+        if (this._enableSelection != value) {
+            this._enableSelection = value;
+            this.raisePropertyChanged('enableSelection');
+        }
+    },
+
+    get_ValueHiddenFieldID: function () {
+        /// <value type="String" maybeNull="true">
+        /// ID of the completion div element.
+        /// </value>
+        return this._ValueHiddenFieldID;
+    },
+    set_ValueHiddenFieldID: function (value) {
+        if (this._ValueHiddenFieldID != value) {
+            this._ValueHiddenFieldID = value;
+            this.raisePropertyChanged('ValueHiddenFieldID');
+        }
+    },
+
+    get_TextHiddenFieldID: function () {
+        /// <value type="String" maybeNull="true">
+        /// ID of the completion div element.
+        /// </value>
+        return this._TextHiddenFieldID;
+    },
+    set_TextHiddenFieldID: function (value) {
+        if (this._TextHiddenFieldID != value) {
+            this._TextHiddenFieldID = value;
+            this.raisePropertyChanged('TextHiddenFieldID');
+        }
+    },
+
+    get_infoImageUrl: function () {
+        /// <value type="String" maybeNull="true">
+        /// Css class name that will be used to style the element for information.
+        /// </value>
+        return this._infoImageUrl;
+    },
+    set_infoImageUrl: function (value) {
+        if (this._infoImageUrl != value) {
+            this._infoImageUrl = value;
+            this.raisePropertyChanged('infoImageUrl');
+        }
+    },
+
+    get_searchImageUrl: function () {
+        /// <value type="String" maybeNull="true">
+        /// Css class name that will be used to style the element while searching.
+        /// </value>
+        return this._searchImageUrl;
+    },
+    set_searchImageUrl: function (value) {
+        if (this._searchImageUrl != value) {
+            this._searchImageUrl = value;
+            this.raisePropertyChanged('searchImageUrl');
+        }
+    },
+
+    get_completionListAltItemCssClass: function () {
+        /// <value type="String" maybeNull="true">
+        /// Css class name that will be used to style an item in the completion list.
+        /// </value>
+        return this._completionListAltItemCssClass;
+    },
+    set_completionListAltItemCssClass: function (value) {
+        if (this._completionListAltItemCssClass != value) {
+            this._completionListAltItemCssClass = value;
+            this.raisePropertyChanged('completionListAltItemCssClass');
+        }
+    },
+
+    //END----------------------------------------------------------------------------    
+    
     get_completionListCssClass: function() {
         /// <value type="String" maybeNull="true">
         /// Css class name that will be used to style the completion list element.
@@ -1368,7 +1752,47 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         }
     },
 
-    add_itemOver: function(handler) {
+    //START----------------------------------------------------------------------------    
+    // DN 8/19/13 : Value changed event
+    add_valueChanged: function (handler) {
+        /// <summary>
+        /// Add an event handler for the valueChanged event
+        /// </summary>
+        /// <param name="handler" type="Function" mayBeNull="false">
+        /// Event handler
+        /// </param>
+        /// <returns />
+        this.get_events().addHandler('valueChanged', handler);
+    },
+    remove_valueChanged: function (handler) {
+        /// <summary>
+        /// Remove an event handler from the valueChanged event
+        /// </summary>
+        /// <param name="handler" type="Function" mayBeNull="false">
+        /// Event handler
+        /// </param>
+        /// <returns />
+        this.get_events().removeHandler('valueChanged', handler);
+    },
+    raiseValueChanged: function (eventArgs) {
+        /// <summary>
+        /// Raise the valueChanged event
+        /// </summary>
+        /// <param name="eventArgs" type="AjaxControlToolkit.AutoCompleteItemEventArgs" mayBeNull="false">
+        /// Event arguments for the itemSelected event
+        /// </param>
+        /// <returns />
+
+        var handler = this.get_events().getHandler('valueChanged');
+        if (handler) {
+            handler(this, eventArgs);
+            //If the text is used, should HtmlEncode to format all ASCII codes back to normal.
+            //            this.get_Value.HtmlEncode();
+        }
+    },
+    //END----------------------------------------------------------------------------    
+
+    add_itemOver: function (handler) {
         /// <summary>
         /// Add an event handler for the itemOver event
         /// </summary>
