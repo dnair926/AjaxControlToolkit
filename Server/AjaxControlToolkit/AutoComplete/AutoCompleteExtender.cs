@@ -27,7 +27,7 @@ using System.Web.UI.WebControls;
 [assembly: System.Web.UI.WebResource("PopupControl.PopupControlBehavior.debug.js", "text/javascript")]
 //-----------------------------------------------------------------------------------------------------
 //-- DN: 8/19: Images for autocomplete
-[assembly: System.Web.UI.WebResource("AutoComplete.AutoCompleteBackground.png", "img/png")]
+[assembly: System.Web.UI.WebResource("AutoComplete.AutoComplete_bg.JPG", "img/png")]
 [assembly: System.Web.UI.WebResource("AutoComplete.AutoComplete_Searching.gif", "img/gif")]
 [assembly: System.Web.UI.WebResource("AutoComplete.AutoComplete.css", "text/css", PerformSubstitution = true)]
 //-----------------------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ namespace AjaxControlToolkit
         [ClientPropertyName("infoImageUrl")]
         public virtual string InfoImageUrl
         {
-            get { return GetPropertyValue("InfoImageUrl", (string)null) ?? (DesignMode ? "" : Page.ClientScript.GetWebResourceUrl(typeof(ValidatorCalloutExtender), "AutoComplete.AutoCompleteBackground.png")); }
+            get { return GetPropertyValue("InfoImageUrl", (string)null) ?? (DesignMode ? "" : Page.ClientScript.GetWebResourceUrl(typeof(ValidatorCalloutExtender), "AutoComplete.AutoComplete_bg.JPG")); }
             set { SetPropertyValue("InfoImageUrl", value); }
         }
 
