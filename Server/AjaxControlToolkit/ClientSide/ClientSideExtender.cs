@@ -7,12 +7,12 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-[assembly: System.Web.UI.WebResource("ClientSide.ClientSideBehavior.js", "text/javascript")]
+[assembly: System.Web.UI.WebResource("AjaxControlToolkit.ClientSide.ClientSideBehavior.js", "text/javascript")]
 
 namespace AjaxControlToolkit
 {
     [Designer("AjaxControlToolkit.ClientSideDesigner, AjaxControlToolkit")]
-    [ClientScriptResource("AjaxControlToolkit.ClientSideBehavior", "ClientSide.ClientSideBehavior.js")]
+    [ClientScriptResource("AjaxControlToolkit.ClientSideBehavior", "AjaxControlToolkit.ClientSide.ClientSideBehavior.js")]
     [TargetControlType(typeof(WebControl))]
     public class ClientSideExtender : ExtenderControlBase
     {

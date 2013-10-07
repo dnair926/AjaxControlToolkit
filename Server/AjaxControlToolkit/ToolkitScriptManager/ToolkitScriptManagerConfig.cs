@@ -29,10 +29,7 @@ namespace AjaxControlToolkit {
                                                        {"BarChart", new[] {"BarChart"}},
                                                        {"BubbleChart", new[] {"BubbleChart"}},
                                                        {"CalendarExtender", new[] {"CalendarExtender"}},
-                                                       {"CapsLockExtender", new[] {"CapsLockExtender"}}, /* Fox Extender */
                                                        {"CascadingDropDown", new[] {"CascadingDropDown"}},
-                                                       {"CharCountExtender", new[] {"CharCountExtender"}}, /* Fox Extender */
-                                                       {"ClientSideExtender", new[] {"ClientSideExtender"}}, /* Fox Extender */
                                                        {"CollapsiblePanelExtender", new[] {"CollapsiblePanelExtender"}},
                                                        {"ColorPickerExtender", new[] {"ColorPickerExtender"}},
                                                        {"ComboBox", new[] {"ComboBox"}},
@@ -85,8 +82,7 @@ namespace AjaxControlToolkit {
                                                                                            "UpdatePanelAnimationExtender",
                                                                                            new[] {"UpdatePanelAnimationExtender"}
                                                                                        },
-                                                       {"ValidatorCalloutExtender", new[] {"ValidatorCalloutExtender"}},
-                                                       {"VisibilityExtender", new[] {"VisibilityExtender"}} /* Fox Extender */
+                                                       {"ValidatorCalloutExtender", new[] {"ValidatorCalloutExtender"}}
                                                    };
         }
 
