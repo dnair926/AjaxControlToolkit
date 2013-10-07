@@ -78,6 +78,7 @@
                 <p style="text-align: center;">
                     <asp:Button ID="OkButton" runat="server" Text="OK" />
                     <asp:Button ID="CancelButton" runat="server" Text="Cancel" />
+                    <asp:Button ID="btnPostbackTest" runat="server" Text="Postback Test" />
                 </p>
             </div>
         </asp:Panel>

@@ -169,6 +169,13 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
             });
             this._onShowing.get_animation().add_ended(this._showingAnimationEndedHandler);
         }
+
+        //-----------------------------------------------------------------------------------------        
+        var state = this.get_ClientState();
+        if (state !== null && state == '0') {
+            this.show();
+        }
+        //-----------------------------------------------------------------------------------------        
     },
 
     dispose: function () {
@@ -388,6 +395,11 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
         this.raiseShown(Sys.EventArgs.Empty);
 
         this._onShown.play();
+
+        //-------------------------------------------------------------------------------    
+        // Save the selected pane to preserve on postbacks
+        this.set_ClientState("0");
+        //-------------------------------------------------------------------------------    
     },
 
     disableTab: function () {
@@ -490,6 +502,10 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
         else {
             this._isAnimationJustEnded = false;
         }
+
+        //-----------------------------------------------------------------------------------------        
+        this.set_ClientState(null);
+        //-----------------------------------------------------------------------------------------        
 
         this._hideImplementation();
 

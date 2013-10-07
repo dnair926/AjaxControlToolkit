@@ -7,6 +7,11 @@ using System.Globalization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+//---------------------------------------------------------------------------------------------------------------
+// Added Functionalities: DN: 10/7/2013
+// 1. Keep popup open when a control on the popup raises postback. (EnableClientState = true)
+//---------------------------------------------------------------------------------------------------------------
+
 [assembly: System.Web.UI.WebResource("ModalPopup.ModalPopupBehavior.js", "text/javascript")]
 [assembly: System.Web.UI.WebResource("ModalPopup.ModalPopupBehavior.debug.js", "text/javascript")]
 
@@ -24,6 +29,12 @@ namespace AjaxControlToolkit {
     [ToolboxItem(Utility.ToolBoxItemTypeName)]
     [ToolboxBitmap(typeof(ModalPopupExtender), "ModalPopup.ModalPopup.ico")]
     public class ModalPopupExtender : DynamicPopulateExtenderControlBase {
+        //-------------------------------------------------------------------------------
+        public ModalPopupExtender() {
+            EnableClientState = true;
+        }
+        //-------------------------------------------------------------------------------
+
         /// <summary>
         /// Desired visibility state: true, false or none
         /// </summary>
