@@ -37,16 +37,6 @@ namespace AjaxControlToolkit {
         }
 
         /// <summary>
-        /// Specify if Client Actions should be ignored. Use this instead of disabling this control so that the TargetControl will be rendered based on the ParentControl value
-        /// </summary>
-        [DefaultValue(false)]
-        [ExtenderControlProperty]
-        public bool DisableClientEvent {
-            get { return GetPropertyValue("DisableClientEvent", false); }
-            set { SetPropertyValue("DisableClientEvent", value); }
-        }
-
-        /// <summary>
         /// Specify the type of control
         /// </summary>
         [DefaultValue(VisibilityControlType.Panel)]
@@ -63,16 +53,7 @@ namespace AjaxControlToolkit {
         [ExtenderControlProperty]
         public VisibilityControlType ParentControlType {
             get { return GetPropertyValue("ParentControlType", VisibilityControlType.DropdownList); }
-            set {
-                if (value == VisibilityControlType.CheckBox |
-                    value == VisibilityControlType.DropdownList |
-                    value == VisibilityControlType.RadiobuttonList |
-                    value == VisibilityControlType.RadioButton) {
-                    SetPropertyValue("ParentControlType", value);
-                } else {
-                    throw new InvalidEnumArgumentException(string.Format("ParentControlType value specified for VisibilityExtender with ID {0} is invalid. Allowed values are: CheckBox, DropdownList, Radiobutton, or RadiobutonList.", this.ID));
-                }
-            }
+            set { SetPropertyValue("ParentControlType", value); }
         }
 
         /// <summary>
@@ -126,51 +107,69 @@ namespace AjaxControlToolkit {
             set { SetPropertyValue("OnValueChanged", value); }
         }
 
-        protected override void OnPreRender(EventArgs e) {
-            bool collapse = true;
-            if (this.Enabled) {
-                string valueList = this.ValuesToCheck;
-                List<string> valueArray = new List<string>();
-                if (valueList != null && valueList.Trim().Length > 0) {
-                    valueArray = new List<string>(valueList.Split(",".ToCharArray()));
-                }
-                bool valueSelected = false;
-                using (Control parentControl = this.FindControl(this.ParentControlID)) {
-                    using (CheckBox cb = parentControl as CheckBox) {
-                        if (parentControl != null) {
-                            valueSelected = cb.Checked;
-                        } else if (valueArray.Count > 0) {
-                            using (ListControl listControl = parentControl as ListControl) {
-                                if (listControl != null) {
-                                    valueSelected = valueArray.Contains(listControl.SelectedValue);
-                                }
-                            }
-                        }
-                        collapse = (valueSelected && ActionOnValueSelected == VisibilityAction.Hide) || (!valueSelected && ActionOnValueSelected == VisibilityAction.Show);
-                    }
-                }
-            } else {
-                collapse = true;
-            }
+        //protected override void OnPreRender(EventArgs e) {
+        //    Control parentControl = base.FindControl(this.ParentControlID);
+        //    Control targetControl = base.FindControl(this.TargetControlID);
+        //    string value = "";
+        //    string[] valuesToCheck = this.ValuesToCheck.Split(",".ToCharArray());
+        //    VisibilityAction visibility = VisibilityAction.Show;
 
-            using (WebControl webControl = this.TargetControl as WebControl) {
-                if (webControl != null) {
-                    if (collapse) {
-                        webControl.Style.Add("display", "none");
-                    } else {
-                        webControl.Style.Remove("display");
-                    }
-                } else {
-                    using (HtmlControl htmlControl = this.TargetControl as HtmlControl) {
-                        if (collapse) {
-                            htmlControl.Style.Add("display", "none");
-                        } else {
-                            htmlControl.Style.Remove("display");
-                        }
-                    }
-                }
-            }
-            base.OnPreRender(e);
-        }
+        //    // Get value from parent control
+        //    if (parentControl is DropDownList) {
+        //        DropDownList ddl = (DropDownList)parentControl;
+        //        value = ddl.SelectedValue;
+        //    } else if (parentControl is RadioButtonList) {
+        //        RadioButtonList rbl = (RadioButtonList)parentControl;
+        //        value = rbl.SelectedValue;
+        //    } else if (parentControl is CheckBox) {
+        //        CheckBox cb = (CheckBox)parentControl;
+        //        value = cb.Checked.ToString();
+        //    } else if (parentControl is TextBox) {
+        //        TextBox tb = (TextBox)parentControl;
+        //        value = tb.Text.Trim();
+        //    }
+
+        //    bool valueSelected = false;
+        //    foreach (string val in valuesToCheck) {
+        //        if (string.Equals(val, value, StringComparison.OrdinalIgnoreCase)) {
+        //            valueSelected = true;
+        //            break;
+        //        }
+        //    }
+
+        //    //Determine whether to show or hide target control based on the value from parent control and action to take when value selected
+        //    if (valueSelected) {
+        //        if (this.ActionOnValueSelected == VisibilityAction.Show) {
+        //            visibility = VisibilityAction.Show;
+        //        } else {
+        //            visibility = VisibilityAction.Hide;
+        //        }
+        //    } else {
+        //        if (this.ActionOnValueSelected == VisibilityAction.Show) {
+        //            visibility = VisibilityAction.Hide;
+        //        } else {
+        //            visibility = VisibilityAction.Show;
+        //        }
+        //    }
+
+        //    //Set the visibility of the control.
+        //    if (targetControl is WebControl) {
+        //        WebControl webControl = (WebControl)targetControl;
+        //        if (visibility == VisibilityAction.Show) {
+        //            webControl.Style.Remove("display");
+        //        } else {
+        //            webControl.Style.Add("display", "none");
+        //        }
+        //    } else if (targetControl is HtmlControl) {
+        //        HtmlControl htmlControl = (HtmlControl)targetControl;
+        //        if (visibility == VisibilityAction.Show) {
+        //            htmlControl.Style.Remove("display");
+        //        } else {
+        //            htmlControl.Style.Add("display", "none");
+        //        }
+        //    }
+
+        //    base.OnPreRender(e);
+        //}
     }
 }
