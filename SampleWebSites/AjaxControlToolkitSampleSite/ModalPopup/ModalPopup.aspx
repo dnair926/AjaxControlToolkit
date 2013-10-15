@@ -46,6 +46,7 @@
             <%= GetContentFillerText() %></p>
         <br />
         <asp:LinkButton ID="LinkButton1" runat="server" Text="Click here to change the paragraph style" />
+        <asp:Button ID="btnPostbackCheckForHidden" Text="Postback Test For Hidden Popups" runat="server" />
         <asp:Panel ID="Panel1" runat="server" Style="display: none" CssClass="modalPopup">
             <asp:Panel ID="Panel3" runat="server" Style="cursor: move; background-color: #DDDDDD;
                 border: solid 1px Gray; color: Black">
@@ -55,6 +56,9 @@
                 </div>
             </asp:Panel>
             <div>
+                <p>
+                    <asp:TextBox ID="tbFocus" Text="Only For Focus" runat="server" />
+                </p>
                 <p>
                     <input type="radio" name="Radio" id="RadioA" checked="checked" onclick="styleToSelect = 'sampleStyleA';" />
                     <label for="RadioA" class="sampleStyleA" style="padding: 3px;">
@@ -78,12 +82,13 @@
                 <p style="text-align: center;">
                     <asp:Button ID="OkButton" runat="server" Text="OK" />
                     <asp:Button ID="CancelButton" runat="server" Text="Cancel" />
+                    <asp:Button ID="btnPostback" Text="Test Postback" runat="server" />
                 </p>
             </div>
         </asp:Panel>
         <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtender" runat="server" TargetControlID="LinkButton1"
-            PopupControlID="Panel1" BackgroundCssClass="modalBackground" OkControlID="OkButton"
-            OnOkScript="onOk()" CancelControlID="CancelButton" DropShadow="true" PopupDragHandleControlID="Panel3" />
+            PopupControlID="Panel1" BackgroundCssClass="modalBackground" OkControlID="OkButton" FocusControlID="tbFocus"
+            OnOkScript="onOk()" CancelControlID="CancelButton" DropShadow="true" ClearControlsOnHiding="true" PopupDragHandleControlID="Panel3" />
         <br />
         <br />
         <hr />

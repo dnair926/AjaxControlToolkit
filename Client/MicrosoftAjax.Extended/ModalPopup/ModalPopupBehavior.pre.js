@@ -45,6 +45,13 @@ Sys.Extended.UI.ModalPopupBehavior = function (element) {
     Sys.Extended.UI.ModalPopupBehavior.initializeBase(this, [element]);
 
     // Properties
+    //------------------------------------------------------------------------
+    // DN: 10/15: New variables
+    this._FocusControlID = null;
+    this._CssClass = "";
+    this._ClearControlsOnHiding = false;
+    //------------------------------------------------------------------------
+
     this._PopupControlID = null;
     this._PopupDragHandleControlID = null;
     this._BackgroundCssClass = null;
@@ -169,6 +176,15 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
             });
             this._onShowing.get_animation().add_ended(this._showingAnimationEndedHandler);
         }
+
+        //-----------------------------------------------------------------------------------------        
+        // DN: 10/15: Use the client state to retain the visibility state, if this is run after postback.
+        var state = this.get_ClientState();
+        if (state !== null && state == '0') {
+            this.show();
+            this._setFocus();
+        }
+        //-----------------------------------------------------------------------------------------        
     },
 
     dispose: function () {
@@ -274,6 +290,24 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
         }
     },
 
+    //-------------------------------------------------------------------------------    
+    // DN: Set Focus to a conrol.
+    _setFocus: function () {
+        if (this._FocusControlID !== null) {
+            var control = $get(this._FocusControlID);
+            if (control && control.focus) {
+                try {
+                    //When setting focus the control must be visible.
+                    //try catch will prevent exceptions when show/hide values change before an animation completes.
+                    //ToDo: Test this with animations to check whether the focus is set correctly
+                    control.focus();
+                } catch (ex) {
+                }
+            }
+        }
+    },
+    //-------------------------------------------------------------------------------    
+
     _onOk: function (e) {
         /// <summary>
         /// Handler for the modal dialog's OK button click
@@ -359,6 +393,12 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
         this._backgroundElement.style.display = '';
         this._foregroundElement.style.display = '';
         this._popupElement.style.display = '';
+        //--------------------------------------------------------------------
+        // DN: 10/15 Set the CssClass of the panel being displayed.
+        if (this._CssClass !== '') {
+            this._popupElement.className = this._CssClass;
+        }
+        //--------------------------------------------------------------------
         if (this._isIE6) {
             this._foregroundElement.style.position = 'absolute';
             this._backgroundElement.style.position = 'absolute';
@@ -388,6 +428,12 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
         this.raiseShown(Sys.EventArgs.Empty);
 
         this._onShown.play();
+
+        //-------------------------------------------------------------------------------    
+        // DN: 10/15: Save the selected pane to preserve on postbacks
+        this.set_ClientState("0");
+        this._setFocus();
+        //-------------------------------------------------------------------------------    
     },
 
     disableTab: function () {
@@ -491,6 +537,14 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
             this._isAnimationJustEnded = false;
         }
 
+        //-----------------------------------------------------------------------------------------        
+        // DN: 10/15: Clear controls on hide, if specified. Clear the Client State indicating that the popup is hidden.
+        if (this.get_ClearControlsOnHiding() == true) {
+            $common.clearControls(this._popupElement);
+        }
+        this.set_ClientState(null);
+        //-----------------------------------------------------------------------------------------        
+
         this._hideImplementation();
 
         this.raiseHidden(Sys.EventArgs.Empty);
@@ -507,6 +561,12 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
 
         this._backgroundElement.style.display = 'none';
         this._foregroundElement.style.display = 'none';
+
+        //-------------------------------------------------------------------------------    
+        // DN: 10/15: Prevent the flashing on page load.
+        this._popupElement.ClassName = '';
+        this._popupElement.style.display = 'none';
+        //-------------------------------------------------------------------------------    
 
         this.restoreTab();
 
@@ -837,6 +897,46 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
         }
     },
 
+    //-------------------------------------------------------------------------------    
+    // DN: 10/15: New methods
+    get_CssClass: function () {
+        /// <value type="String">
+        /// The CSS class to apply to the background when the modal popup is displayed
+        /// </value>
+        return this._CssClass;
+    },
+    set_CssClass: function (value) {
+        if (this._CssClass != value) {
+            this._CssClass = value;
+            this.raisePropertyChanged('CssClass');
+        }
+    },
+    get_ClearControlsOnHiding: function () {
+        /// <value type="String">
+        /// Specify whether to clear control on the popup when hiding the popup.
+        /// </value>
+        return this._ClearControlsOnHiding;
+    },
+    set_ClearControlsOnHiding: function (value) {
+        if (this._ClearControlOnHiding != value) {
+            this._ClearControlsOnHiding = value;
+            this.raisePropertyChanged('ClearControlsOnHiding');
+        }
+    },
+    get_FocusControlID: function () {
+        /// <value type="String">
+        /// The ID of the element that cancels the modal popup
+        /// </value>
+        return this._FocusControlID;
+    },
+    set_FocusControlID: function (value) {
+        if (this._FocusControlID != value) {
+            this._FocusControlID = value;
+            this.raisePropertyChanged('FocusControlID');
+        }
+    },
+    //-------------------------------------------------------------------------------    
+
     get_OnOkScript: function () {
         /// <value type="String">
         /// Script to run when the modal popup is dismissed with the OkControlID
@@ -1089,3 +1189,19 @@ Sys.Extended.UI.ModalPopupBehavior.invokeViaServer = function (behaviorID, show)
     }
 };
 
+//---------------------------------------------------------------------------------
+// DN: 10/15: Clear control values on the pop up 
+Sys.Extended.UI.ModalPopupBehavior.invokeViaServerClear = function (behaviorID) {
+    /// <summary>
+    /// This static function (that is indended to be called from script emitted
+    /// on the server) will clear values on the popup when hidden
+    /// </summary>
+    /// <param name="behaviorID" type="String">
+    /// ID of the modal popup behavior
+    /// </param>
+    var behavior = $find(behaviorID);
+    if (behavior) {
+        $common.clearControls(behavior);
+    }
+}
+//-----------------------------------------------------------------------------------

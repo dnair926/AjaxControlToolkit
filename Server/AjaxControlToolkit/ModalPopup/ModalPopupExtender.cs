@@ -7,6 +7,14 @@ using System.Globalization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+//------------------------------------------------------------------------
+// Changes: 10/15
+// 1. Enabled Client State to be able to store the visibility state, to retain the state after postback.
+// 2. Clear controls on the popup when hiding, to reopen popup with fresh controls.
+// 3. Auto-focus to a control when the control is opened.
+// 4. Set the CssClass of the popup
+//------------------------------------------------------------------------
+
 [assembly: System.Web.UI.WebResource("ModalPopup.ModalPopupBehavior.js", "text/javascript")]
 [assembly: System.Web.UI.WebResource("ModalPopup.ModalPopupBehavior.debug.js", "text/javascript")]
 
@@ -34,6 +42,50 @@ namespace AjaxControlToolkit {
         private Animation _onHiding;
         private Animation _onShowing;
 
+        //------------------------------------------------------------------------
+        // DN: 10/15: Enable Client State to be able to store the visibility state, to retain the state after postback.
+        public ModalPopupExtender() {
+            EnableClientState = true;
+        }
+        /// <summary>
+        /// Clear controls: true, false, or none
+        /// </summary>
+        private bool? _clear;
+        // New Properties
+        #region "New Properties"
+        /// <summary>
+        /// The ID of the element to set focus on when popup is opened.
+        /// </summary>
+        [ExtenderControlProperty]
+        [DefaultValue("")]
+        [IDReferenceProperty(typeof(WebControl))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Following ASP.NET AJAX pattern")]
+        public string FocusControlID {
+            get { return GetPropertyValue("FocusControlID", ""); }
+            set { SetPropertyValue("FocusControlID", value); }
+        }
+        /// <summary>
+        /// CssClass of the TargetControlID
+        /// </summary>
+        [ExtenderControlProperty]
+        [DefaultValue("modalCssStyle")]
+        [ClientPropertyName("CssClass")]
+        public string CssClass {
+            get { return GetPropertyValue("CssClass", "modalCssStyle"); }
+            set { SetPropertyValue("CssClass", value); }
+        }
+        /// <summary>
+        /// Specify whether to clear controls when hiding popup
+        /// </summary>
+        [ExtenderControlProperty]
+        [DefaultValue(false)]
+        [ClientPropertyName("ClearControlsOnHiding")]
+        public bool ClearControlsOnHiding {
+            get { return GetPropertyValue("ClearControlsOnHiding", false); }
+            set { SetPropertyValue("ClearControlsOnHiding", value); }
+        }
+        #endregion
+        //------------------------------------------------------------------------
 
         /// <summary>
         /// The ID of the element to display as a modal popup
@@ -216,6 +268,7 @@ namespace AjaxControlToolkit {
             // It is possible for Show() to be called numerous times during the same
             // postback so we just remember the desired state
             _show = true;
+            _clear = false;
         }
 
         /// <summary>
@@ -225,6 +278,7 @@ namespace AjaxControlToolkit {
             // It is possible for Hide() to be called numerous times during the same
             // postback so we just remember the desired state
             _show = false;
+            _clear = this.ClearControlsOnHiding;
         }
 
         /// <summary>
@@ -235,7 +289,13 @@ namespace AjaxControlToolkit {
             // If Show() or Hide() were called during the request, change the visibility now
             if (_show.HasValue) {
                 ChangeVisibility(_show.Value);
+            //---------------------------------------------------------------
+            // DN: 10/15/2013: If Clear value is set, then clear the controls on the popup
+            } else if (_clear.HasValue && _clear.Value) {
+                ClearControls();
+                _clear = new bool?();
             }
+            //---------------------------------------------------------------
 
             ResolveControlIDs(_onShown);
             ResolveControlIDs(_onHidden);
@@ -276,6 +336,24 @@ namespace AjaxControlToolkit {
                     show ? "true" : "false");
                 ScriptManager.RegisterStartupScript(this, typeof(ModalPopupExtender), operation + BehaviorID, script, true);
             }
+        }
+        /// <summary>
+        /// Emit script to the client that will cause the controls on the ModalPopup to be cleared.
+        /// </summary>
+        /// <param name="show">True to clear the controls, false to not to do anything</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:DoNotPassLiteralsAsLocalizedParameters", Justification = "Assembly is not localized")]
+        private void ClearControls() {
+            // Add a load handler to Clear the controls on the popup
+            string script = string.Format(CultureInfo.InvariantCulture,
+                "(function() {{" +
+                    "var fn = function() {{" +
+                        "AjaxControlToolkit.ModalPopupBehavior.invokeViaServerClear('{0}'); " +
+                        "Sys.Application.remove_load(fn);" +
+                    "}};" +
+                    "Sys.Application.add_load(fn);" +
+                "}})();",
+                BehaviorID);
+            ScriptManager.RegisterStartupScript(this, typeof(ModalPopupExtender), BehaviorID, script, true);
         }
     }
 }
