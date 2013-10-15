@@ -31,9 +31,7 @@ Sys.Extended.UI.VisibilityControlType.prototype = {
     LinkButton : 6,
     TableRow : 7,
     TableCell : 8,
-    Table: 9,
-    CheckBoxList: 10,
-    RadioButton: 11
+    Table : 9
 }
 Sys.Extended.UI.VisibilityControlType.registerEnum('Sys.Extended.UI.VisibilityControlType');
 Sys.Extended.UI.VisibilityAction = function() {
@@ -55,8 +53,7 @@ Sys.Extended.UI.VisibilityBehavior = function(element) {
     Sys.Extended.UI.VisibilityBehavior.initializeBase(this, [element]);
     
     // property values
-    this._collapsed = false;
-    this._disableClientEvent = false;
+    this._collapsed = false;    
     this._parentControlType = Sys.Extended.UI.VisibilityControlType.DropdownList;
     this._targetControlType = Sys.Extended.UI.VisibilityControlType.Panel;
     this._actionOnValueSelected =  Sys.Extended.UI.VisibilityAction.Show;
@@ -92,7 +89,6 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
                     break;
                 case Sys.Extended.UI.VisibilityControlType.RadiobuttonList:  //RadiobuttonList
                 case Sys.Extended.UI.VisibilityControlType.CheckBox: //CheckBox
-                case Sys.Extended.UI.VisibilityControlType.RadioButton: //RadioButton
                     $addHandler(parentElement, 'click', this._eventHandler);
                     break;
             }
@@ -190,10 +186,8 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
         /// <param name="eventObj" type="Sys.UI.DomEvent" mayBeNull="true" optional="true">
         /// Event Info
         /// </param>          
-        if (!this._disableClientEvent) {
-            this.changeControlMode();
-            this.raiseValueChanged(new Sys.EventArgs());
-        }
+        this.changeControlMode();
+        this.raiseValueChanged(new Sys.EventArgs());
     },
     
     changeControlMode : function() {
@@ -381,7 +375,6 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
                     }
                     break;
                 case Sys.Extended.UI.VisibilityControlType.CheckBox: //CheckBox
-                case Sys.Extended.UI.VisibilityControlType.RadioButton: //RadioButton
                     if ((parentElement) && (parentElement.checked)) {
                         valueFound = true;
                     }
@@ -442,19 +435,8 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
             this.raisePropertyChanged('Collapsed');
         }
     },
-    get_DisableClientEvent: function () {
-        /// <value type="Boolean">
-        /// Whether or not to disable client actions
-        /// </value>
-        return this._disableClientEvent;
-    },
-    set_DisableClientEvent: function (value) {
-        if (this._disableClientEvent != value) {
-            this._disableClientEvent = value;
-            this.raisePropertyChanged('disableClientEvent');
-        }
-    },
-    get_ParentControlID: function () {
+
+    get_ParentControlID : function() {
         /// <value type="String">
         /// ID of the control used to collapse the target when clicked
         /// </value>
