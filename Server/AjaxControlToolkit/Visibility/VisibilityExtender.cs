@@ -128,6 +128,11 @@ namespace AjaxControlToolkit {
         }
 
         protected override void OnPreRender(EventArgs e) {
+            base.OnPreRender(e);
+            SetControlVisibility();
+        }
+
+        private void SetControlVisibility() {
             bool collapse = true;
             if (this.Enabled) {
                 string valueList = this.ValuesToCheck;
@@ -147,7 +152,7 @@ namespace AjaxControlToolkit {
                                 }
                             }
                         }
-                        collapse = (valueSelected && ActionOnValueSelected == VisibilityAction.Hide) || (!valueSelected && ActionOnValueSelected == VisibilityAction.Show);
+                        collapse = (valueSelected && ActionOnValueSelected == VisibilityMode.Hide) || (!valueSelected && ActionOnValueSelected == VisibilityMode.Show);
                     }
                 }
             } else {
@@ -171,7 +176,6 @@ namespace AjaxControlToolkit {
                     }
                 }
             }
-            base.OnPreRender(e);
         }
     }
 }
