@@ -5,7 +5,8 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="SampleContent" Runat="Server">
     <ajaxToolkit:ToolkitScriptManager runat="Server" EnableScriptGlobalization="true"
-        EnableScriptLocalization="true" ID="ScriptManager1" />
+        EnableScriptLocalization="true" ID="ScriptManager1" >
+    </ajaxToolkit:ToolkitScriptManager>
 
     <div class="demoarea">
         <div class="demoheading">
@@ -28,20 +29,23 @@
             <asp:ListItem Text="RadiobuttonList" Value="rbl" />
             <asp:ListItem Text="Label" Value="lbl" />
        </asp:DropDownList>
-        <ajaxToolkit:VisibilityExtender ID="veDDL" ActionOnValueSelected="Show" FocusControlID="tbRBLTest" TargetControlID="pnlTest" TargetControlType="Panel"
+        <ajaxToolkit:VisibilityExtender ID="veDDL" ActionOnValueSelected="Show" TargetControlID="pnlTest" TargetControlType="Panel"
             ParentControlID="ddlTest" ParentControlType="DropdownList" ValuesToCheck="pnl" runat="server" />
-        <ajaxToolkit:VisibilityExtender ID="veDDL2" ActionOnValueSelected="Show" FocusControlID="tbRBLTest" TargetControlID="ddlTestControl" TargetControlType="DropdownList"
+        <ajaxToolkit:VisibilityExtender ID="veDDL2" ActionOnValueSelected="Show" TargetControlID="ddlTestControl" TargetControlType="DropdownList"
             ParentControlID="ddlTest" ParentControlType="DropdownList" ValuesToCheck="ddl" runat="server" />
-        <ajaxToolkit:VisibilityExtender ID="veDDL3" ActionOnValueSelected="Show" FocusControlID="tbRBLTest" TargetControlID="rblTestControl" TargetControlType="RadiobuttonList"
+        <ajaxToolkit:VisibilityExtender ID="veDDL3" ActionOnValueSelected="Show" TargetControlID="rblTestControl" TargetControlType="RadiobuttonList"
             ParentControlID="ddlTest" ParentControlType="DropdownList" ValuesToCheck="rbl" runat="server" />
-        <ajaxToolkit:VisibilityExtender ID="veDDL4" ActionOnValueSelected="Show" FocusControlID="tbRBLTest" TargetControlID="lblTest" TargetControlType="Label"
+        <ajaxToolkit:VisibilityExtender ID="veDDL4" ActionOnValueSelected="Show" TargetControlID="lblTest" TargetControlType="Label"
             ParentControlID="ddlTest" ParentControlType="DropdownList" ValuesToCheck="lbl" runat="server" />
+        <ajaxToolkit:VisibilityExtender ID="veDDL5" ActionOnValueSelected="Show" TargetControlID="lblNested" TargetControlType="Label"
+            ParentControlID="RadioButtonList1" ParentControlType="RadiobuttonList" ValuesToCheck="Yes" runat="server" />
        <asp:Panel ID="pnlTest" runat="server" style="display:none;border:solid 1px #000000;">
-        These are the controls inside the panel
+        Would you like to see nested controls?
         <asp:RadioButtonList ID="RadioButtonList1" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal">
             <asp:ListItem Text="Yes" Value="Yes" />
             <asp:ListItem Text="No" Value="No" />
         </asp:RadioButtonList>
+           <asp:Label ID="lblNested" Text="This is a nested label that depends on the previous radio button list." runat="server" />
        </asp:Panel>
        <asp:DropDownList ID="ddlTestControl" runat="server">
             <asp:ListItem Text="You see the droddown" Value="pnl" />

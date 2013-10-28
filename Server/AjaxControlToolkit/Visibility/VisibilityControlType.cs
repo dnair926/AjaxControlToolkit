@@ -15,5 +15,6 @@ namespace AjaxControlToolkit {
         TableCell = 8,
         Table = 9,
         CheckBoxList = 10,
+        RadioButton = 11,
     }
 }

@@ -134,9 +134,23 @@ namespace AjaxControlToolkit {
                     if (value != defaultValue) {
                         var formatedValue = value.ToString();
 
+                        var idReferenceProperty =
+                            (IDReferencePropertyAttribute)
+                                property.GetCustomAttributes(typeof(IDReferencePropertyAttribute), false).FirstOrDefault();
+
+                        if (idReferenceProperty != null) {
+                            formatedValue = GetClientID(formatedValue);
+                        }
+
+                        if (propType.IsEnum) {
+                            formatedValue = Convert.ToInt32(Enum.Parse(propType, formatedValue)).ToString();
+                        }
+
                         // Encode and quotize if value is string
-                        if (propType.Equals(typeof (string)))
+                        if (propType.Equals(typeof(string)))
                             formatedValue = "'" + Page.Server.HtmlEncode(formatedValue) + "'";
+                        else if (propType.Equals(typeof(bool)))
+                            formatedValue = formatedValue.ToLower();
                         dataOptions.Add(string.Format("{0}:{1}", CamelCaseFormat(property.Name), formatedValue));
                     }
                 }

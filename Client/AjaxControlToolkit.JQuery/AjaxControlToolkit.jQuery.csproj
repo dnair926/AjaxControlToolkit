@@ -53,6 +53,7 @@
     <Content Include="Scripts\jquery-1.9.1.min.js" />
     <Content Include="Start.pre.js" />
     <Content Include="ToggleButton\ToggleButtonExtender.pre.js" />
+    <Content Include="Visibility\VisibilityExtender.pre.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
