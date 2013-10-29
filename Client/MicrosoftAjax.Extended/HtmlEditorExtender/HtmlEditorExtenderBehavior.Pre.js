@@ -752,22 +752,24 @@
                 //html encode
                 var char = 3;
                 var sel = null;
+                
 
-                setTimeout(function () {
-                    if (this._editableDiv != null)
-                        this._editableDiv.focus();
-                }, 0);
-                if (Sys.Browser.agent != Sys.Browser.Firefox) {
-                    if (document.selection) {
-                        sel = document.selection.createRange();
-                        sel.moveStart('character', char);
-                        sel.select();
-                    }
-                    else {
-                        sel = window.getSelection();
-                        sel.collapse(this._editableDiv.firstChild, char);
-                    }
-                }
+                //DN: 10/28/2013 :- Commented becuase it was causing the page to scroll to top on page load.
+                //setTimeout(function () {
+                //    if (this._editableDiv != null)
+                //        this._editableDiv.focus();
+                //}, 0);
+                //if (Sys.Browser.agent != Sys.Browser.Firefox) {
+                //    if (document.selection) {
+                //        sel = document.selection.createRange();
+                //        sel.moveStart('character', char);
+                //        sel.select();
+                //    }
+                //    else {
+                //        sel = window.getSelection();
+                //        sel.collapse(this._editableDiv.firstChild, char);
+                //    }
+                //}
 
                 //Encode html tags
                 this._textbox._element.value = this._encodeHtml();
