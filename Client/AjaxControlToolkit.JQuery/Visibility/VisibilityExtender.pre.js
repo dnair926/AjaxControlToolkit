@@ -84,7 +84,7 @@
 
             var valueList = opt.valuesToCheck;
             var values = '';
-            if (valueList !== null) {
+            if (valueList) {
                 values = valueList.split(',');
             }
             var valueFound = false;
@@ -92,7 +92,7 @@
             var selectedValue;
             if (opt.parentControlType == VisibilityControlType.CheckBox) {
                 selectedValue = $('#' + opt.parentControlID + ':checked').val();
-                valueFound = selectedValue.trim().length > 0;
+                valueFound = selectedValue ? selectedValue.trim().length > 0 : false;
             } else if (opt.parentControlType == VisibilityControlType.RadiobuttonList) {
                 selectedValue = $('#' + opt.parentControlID + ' input[type=radio]:checked').val();
                 valueFound = $.inArray(selectedValue, values) >= 0;
