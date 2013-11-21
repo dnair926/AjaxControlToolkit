@@ -13,8 +13,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
-[assembly: System.Web.UI.WebResource("jQuery.Visibility.VisibilityExtender.js", "text/javascript")]
-[assembly: System.Web.UI.WebResource("jQuery.Visibility.VisibilityExtender.debug.js", "text/javascript")]
+[assembly: System.Web.UI.WebResource("Visibility.VisibilityBehavior.js", "text/javascript")]
 
 namespace AjaxControlToolkit {
     /// <summary>
@@ -24,12 +23,12 @@ namespace AjaxControlToolkit {
     /// for doing things like showing or hiding content or maximizing available space.
     /// </summary>
     [Designer("AjaxControlToolkit.VisibilityDesigner, AjaxControlToolkit")]
-    [ClientScriptResource(null, "jQuery.Visibility.VisibilityExtender.js")]
+    [ClientScriptResource("Sys.Extended.UI.VisibilityBehavior", "Visibility.VisibilityBehavior.js")]
     [RequiredScript(typeof(CommonToolkitScripts))]
     [TargetControlType(typeof(WebControl))]
     [TargetControlType(typeof(HtmlControl))]
     [DefaultProperty("ParentControlID")]
-    public class VisibilityExtender : JQueryExtenderControl {
+    public class VisibilityExtender : ExtenderControlBase {
 
         /// <summary>
         /// Specify if Client Actions should be ignored. Use this instead of disabling this control so that the TargetControl will be rendered based on the ParentControl value
