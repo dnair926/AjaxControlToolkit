@@ -7,23 +7,16 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-[assembly: System.Web.UI.WebResource("AjaxControlToolkit.ClientSide.ClientSideBehavior.js", "text/javascript")]
+[assembly: System.Web.UI.WebResource("ClientSide.ClientSideBehavior.js", "text/javascript")]
+[assembly: System.Web.UI.WebResource("ClientSide.ClientSideBehavior.debug.js", "text/javascript")]
 
 namespace AjaxControlToolkit
 {
     [Designer("AjaxControlToolkit.ClientSideDesigner, AjaxControlToolkit")]
-    [ClientScriptResource("AjaxControlToolkit.ClientSideBehavior", "AjaxControlToolkit.ClientSide.ClientSideBehavior.js")]
+    [ClientScriptResource("Sys.Extended.UI.ClientSideBehavior", "ClientSide.ClientSideBehavior.js")]
     [TargetControlType(typeof(WebControl))]
     public class ClientSideExtender : ExtenderControlBase
     {
-        /// <summary>
-        /// Default constructor to enable client state
-        /// </summary>
-        public ClientSideExtender()
-        {
-            EnableClientState = true;
-        }
-
         /// <summary>
         /// Specify the type of control
         /// </summary>
@@ -33,6 +26,16 @@ namespace AjaxControlToolkit
         {
             get { return GetPropertyValue("TargetControlType", ClientSideTargetControlType.DropdownList); }
             set { SetPropertyValue("TargetControlType", value); }
+        }
+
+        /// <summary>
+        /// Specify the type of control
+        /// </summary>
+        [DefaultValue("")]
+        [ExtenderControlProperty]
+        public string ArgumentValues {
+            get { return GetPropertyValue("ArgumentValues", ""); }
+            set { SetPropertyValue("ArgumentValues", value); }
         }
 
         /// <summary>
