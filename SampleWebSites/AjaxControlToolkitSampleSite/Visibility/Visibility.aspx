@@ -28,6 +28,9 @@
             <asp:ListItem Text="Dropdownlist" Value="ddl" />
             <asp:ListItem Text="RadiobuttonList" Value="rbl" />
             <asp:ListItem Text="Label" Value="lbl" />
+            <asp:ListItem Text="Table" Value="tbl" />
+            <asp:ListItem Text="TableRow" Value="tbr" />
+            <asp:ListItem Text="TableCell" Value="tbc" />
        </asp:DropDownList>
         <ajaxToolkit:VisibilityExtender ID="veDDL" ActionOnValueSelected="Show" TargetControlID="pnlTest" TargetControlType="Panel"
             ParentControlID="ddlTest" ParentControlType="DropdownList" ValuesToCheck="pnl" runat="server" />
@@ -39,6 +42,13 @@
             ParentControlID="ddlTest" ParentControlType="DropdownList" ValuesToCheck="lbl" runat="server" />
         <ajaxToolkit:VisibilityExtender ID="veDDL5" ActionOnValueSelected="Show" TargetControlID="lblNested" TargetControlType="Label"
             ParentControlID="RadioButtonList1" ParentControlType="RadiobuttonList" ValuesToCheck="Yes" runat="server" />
+        <ajaxToolkit:VisibilityExtender ID="VisibilityExtender1" ActionOnValueSelected="Show" TargetControlID="tblTest" TargetControlType="Table"
+            ParentControlID="ddlTest" ParentControlType="DropdownList" ValuesToCheck="tbl" runat="server" />
+        <ajaxToolkit:VisibilityExtender ID="VisibilityExtender2" ActionOnValueSelected="Show" TargetControlID="trTest" TargetControlType="TableRow"
+            ParentControlID="ddlTest" ParentControlType="DropdownList" ValuesToCheck="tbr" runat="server" />
+        <ajaxToolkit:VisibilityExtender ID="VisibilityExtender3" ActionOnValueSelected="Show" TargetControlID="tcTest" TargetControlType="TableCell"
+            ParentControlID="ddlTest" ParentControlType="DropdownList" ValuesToCheck="tbc" runat="server" />
+        <asp:Label ID="lblTest" Text="<br />This is a label with some text, and if you are seeing it, the test succeeded." runat="server" />
        <asp:Panel ID="pnlTest" runat="server" style="display:none;border:solid 1px #000000;">
         Would you like to see nested controls?
         <asp:RadioButtonList ID="RadioButtonList1" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal">
@@ -56,7 +66,9 @@
             <asp:ListItem Text="You see radiobutton" Value="Yes" />
             <asp:ListItem Text="I am happy" Value="No" />
         </asp:RadioButtonList>
-        <asp:Label ID="lblTest" Text="<br />This is a label with some text, and if you are seeing it, the test succeeded." runat="server" />
+        <table><tr><td id="tcTest" runat="server">Table Cell Test</td></tr></table>
+        <table><tr runat="server" id="trTest"><td>Table Row Test</td></tr></table>
+        <table runat="server" id="tblTest" style="border:2px solid #000;"><tr><td>Test Table</td></tr></table>
         <br /><br /><asp:Button ID="btnPostbackTest" Text="Test Postback" runat="server" />
     </div>
     <div class="demobottom">

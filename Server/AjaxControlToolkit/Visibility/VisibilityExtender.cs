@@ -30,12 +30,6 @@ namespace AjaxControlToolkit {
     [TargetControlType(typeof(HtmlControl))]
     [DefaultProperty("ParentControlID")]
     public class VisibilityExtender : JQueryExtenderControl {
-        /// <summary>
-        /// Default constructor to enable client state
-        /// </summary>
-        public VisibilityExtender() {
-            EnableClientState = true;
-        }
 
         /// <summary>
         /// Specify if Client Actions should be ignored. Use this instead of disabling this control so that the TargetControl will be rendered based on the ParentControl value

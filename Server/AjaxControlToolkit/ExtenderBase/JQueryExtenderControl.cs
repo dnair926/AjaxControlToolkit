@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 namespace AjaxControlToolkit {
@@ -48,21 +49,36 @@ namespace AjaxControlToolkit {
             if (DesignMode)
                 return;
 
-            var dataOptions = BuildDataOptionsAttribute();
-            var targetControl = this.TargetControl as WebControl;
-            if (targetControl == null)
-                throw new Exception("Target control type must be WebControl");
-
-            _targetControlType = targetControl.GetType();
-
-            // Hijack rendering method, we want to pure data-options attribute rendering (un-encoded) 
-            targetControl.Parent.SetRenderMethodDelegate(RenderTargetControl);
-            var attrs = (targetControl is CheckBox)
-                ? (targetControl as CheckBox).InputAttributes
-                : targetControl.Attributes;
-            attrs.Add(DataOptionPrefix + _attrControlName, dataOptions);
         }
 
+        protected override void OnPreRender(EventArgs e) {
+            base.OnPreRender(e);
+
+            if (!Enabled || !TargetControl.Visible)
+                return;
+
+            var dataOptions = BuildDataOptionsAttribute();
+            var targetControl = this.TargetControl as WebControl;
+            var htmlTargetControl = this.TargetControl as HtmlControl;
+            if (targetControl == null && htmlTargetControl == null)
+                throw new Exception("Target control type must be WebControl or HtmlControl");
+
+            _targetControlType = TargetControl.GetType();
+
+            TargetControl.Parent.SetRenderMethodDelegate(RenderTargetControl);
+            var attrs = (targetControl != null)
+                            ? (targetControl is CheckBox)
+                                ? (targetControl as CheckBox).InputAttributes
+                                    : targetControl.Attributes
+                            : (htmlTargetControl != null)
+                                ? htmlTargetControl.Attributes
+                                    : null;
+
+            if (attrs != null) {
+                attrs.Add(DataOptionPrefix + _attrControlName, dataOptions);
+            }
+        }
+        
         /// <summary>
         /// Delegate method for extender target control parent SetRenderMethodDelegate method
         /// </summary>
@@ -73,7 +89,8 @@ namespace AjaxControlToolkit {
                 }
                 control.RenderControl(writer);
             }
-        }        
+        }
+
 
         /// <summary>
         /// Replace data-act-* attribute with un-encoded values
@@ -82,18 +99,24 @@ namespace AjaxControlToolkit {
         /// <param name="control">Control to evaluate</param>
         private void DecodeAttributeValues(HtmlTextWriter writer, Control control) {
             var targetControl = control as WebControl;
-            var attrs = (targetControl is CheckBox)
-                ? (targetControl as CheckBox).InputAttributes
-                : targetControl.Attributes;
+            var htmlTargetControl = control as HtmlControl;
+            var attrs = (targetControl != null)
+                            ? (targetControl is CheckBox)
+                                ? (targetControl as CheckBox).InputAttributes
+                                    : targetControl.Attributes
+                            : (htmlTargetControl != null)
+                                ? htmlTargetControl.Attributes
+                                    : null;
+            if (attrs != null) {
+                var keys = new string[attrs.Keys.Count];
+                attrs.Keys.CopyTo(keys, 0);
 
-            var keys = new string[attrs.Keys.Count];
-            attrs.Keys.CopyTo(keys, 0);
-
-            foreach (string attrKey in keys) {
-                if (attrKey.StartsWith(DataOptionPrefix)) {
-                    var attrVal = attrs[attrKey];
-                    attrs.Remove(attrKey);
-                    writer.AddAttribute(attrKey, attrVal, false);
+                foreach (string attrKey in keys) {
+                    if (attrKey.StartsWith(DataOptionPrefix)) {
+                        var attrVal = attrs[attrKey];
+                        attrs.Remove(attrKey);
+                        writer.AddAttribute(attrKey, attrVal, false);
+                    }
                 }
             }
         }
