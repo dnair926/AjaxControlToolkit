@@ -1001,4 +1001,8 @@
     </ItemGroup>
   </Target>
   <Import Project="$(SolutionDir)BuildAllFrameworks.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>tf checkout "..\..\..\..\..\..\..\CommonDLLs\Framework 4.5\AjaxControlToolkit.dll" /lock:none
+xcopy "$(TargetPath)" "..\..\..\..\..\..\..\CommonDLLs\Framework 4.5\" /y/f</PostBuildEvent>
+  </PropertyGroup>
 </Project>
