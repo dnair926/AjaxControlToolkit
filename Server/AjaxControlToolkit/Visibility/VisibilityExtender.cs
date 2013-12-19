@@ -14,6 +14,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
 [assembly: System.Web.UI.WebResource("Visibility.VisibilityBehavior.js", "text/javascript")]
+[assembly: System.Web.UI.WebResource("Visibility.VisibilityBehavior.debug.js", "text/javascript")]
 
 namespace AjaxControlToolkit {
     /// <summary>
