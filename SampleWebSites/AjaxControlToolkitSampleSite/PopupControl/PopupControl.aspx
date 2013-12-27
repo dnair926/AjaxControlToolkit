@@ -43,7 +43,9 @@
             Position="Bottom" />
         
         Reminder message:
-        <asp:TextBox ID="MessageTextBox" runat="server" Width="200" autocomplete="off" /><br /><br />
+        <asp:TextBox ID="MessageTextBox" runat="server" Width="200" autocomplete="off" /><br/>
+        <i>Please select 'Cancel' to discard changes.</i>
+        <br /><br />
         <asp:Panel ID="Panel2" runat="server" CssClass="popupControl">
             <div style="border: 1px outset white; width: 100px">
                 <asp:UpdatePanel runat="server" ID="up2">
@@ -65,7 +67,7 @@
             PopupControlID="Panel2"
             CommitProperty="value"
             Position="Bottom"
-            CommitScript="e.value += ' - do not forget!';" />
+            CommitScript="this.get_element().value += ' - do not forget!';" />
 
         <asp:UpdatePanel ID="UpdatePanel3" runat="server">
             <ContentTemplate>

@@ -11,8 +11,9 @@ using System.Web.UI.WebControls;
 
 #region [ Resources ]
 
-[assembly: System.Web.UI.WebResource("Tabs.Tabs.js", "application/x-javascript")]
-[assembly: System.Web.UI.WebResource("Tabs.Tabs.debug.js", "application/x-javascript")]
+[assembly: System.Web.UI.WebResource("jQuery.Tabs.TabContainer.js", "text/javascript")]
+[assembly: System.Web.UI.WebResource("jQuery.Tabs.TabContainer.debug.js", "text/javascript")]
+
 [assembly: WebResource("Tabs.Tabs_resource.css", "text/css", PerformSubstitution = true)]
 [assembly: WebResource("Tabs.tab-line.gif", "image/gif")]
 // horizontal top (default) images
@@ -65,11 +66,10 @@ namespace AjaxControlToolkit
     /// </summary>
     [Designer("AjaxControlToolkit.TabContainerDesigner, AjaxControlToolkit")]
     [ParseChildren(typeof(TabPanel))]
-    [RequiredScript(typeof(CommonToolkitScripts))]
     [ClientCssResource("Tabs.Tabs_resource.css")]
-    [ClientScriptResource("Sys.Extended.UI.TabContainer", "Tabs.Tabs.js")]
+    [ClientScriptResource(null, "jQuery.Tabs.TabContainer.js")]
     [System.Drawing.ToolboxBitmap(typeof(TabContainer), "Tabs.Tabs.ico")]
-    public class TabContainer : ScriptControlBase, IPostBackEventHandler
+    public class TabContainer : JQueryScriptControl, IPostBackEventHandler
     {
         #region [ Static Fields ]
 
@@ -306,7 +306,7 @@ namespace AjaxControlToolkit
         [Category("Appearance")]
         public override string CssClass
         {
-            get { return base.CssClass; }
+            get { return string.IsNullOrEmpty(base.CssClass) ? "ajax__tab_xp" : base.CssClass; }
             set { base.CssClass = value; }
         }
 
@@ -527,7 +527,7 @@ namespace AjaxControlToolkit
         protected override Style CreateControlStyle()
         {
             TabContainerStyle style = new TabContainerStyle(ViewState);
-            style.CssClass = "ajax__tab_xp";
+            style.CssClass = CssClass;
             return style;
         }
 
@@ -648,7 +648,7 @@ namespace AjaxControlToolkit
         {
             Style.Remove(HtmlTextWriterStyle.Visibility);
             if (!ControlStyleCreated)
-                writer.AddAttribute(HtmlTextWriterAttribute.Class, "ajax__tab_xp");
+                writer.AddAttribute(HtmlTextWriterAttribute.Class, CssClass);
             if (_useVerticalStripPlacement)
                 writer.AddStyleAttribute(HtmlTextWriterStyle.Display, "block");
             if (!Height.IsEmpty && Height.Type == UnitType.Percentage)
