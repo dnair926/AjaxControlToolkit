@@ -48,7 +48,7 @@ Sys.Extended.UI.ModalPopupBehavior = function (element) {
     //------------------------------------------------------------------------
     // DN: 10/15: New variables
     this._FocusControlID = null;
-    this._CssClass = "";
+    this._CssClass = "modalCssStyle";
     this._ClearControlsOnHiding = false;
     //------------------------------------------------------------------------
 
