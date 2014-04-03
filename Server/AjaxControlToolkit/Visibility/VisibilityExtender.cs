@@ -156,18 +156,22 @@ namespace AjaxControlToolkit {
             using (WebControl webControl = this.TargetControl as WebControl) {
                 if (webControl != null) {
                     if (collapse) {
-                        webControl.Style.Add("display", "none");
+                        webControl.Style.Add(HtmlTextWriterStyle.Display, "none");
                     } else {
-                        webControl.Style.Remove("display");
+                        webControl.Style.Remove(HtmlTextWriterStyle.Display);
                     }
-                } else {
-                    using (HtmlControl htmlControl = this.TargetControl as HtmlControl) {
-                        if (collapse) {
-                            htmlControl.Style.Add("display", "none");
-                        } else {
-                            htmlControl.Style.Remove("display");
-                        }
-                    }
+                    return;
+                }
+            }
+
+
+            using (HtmlControl htmlControl = this.TargetControl as HtmlControl) {
+                if (htmlControl != null) {
+                    if (collapse) {
+                        htmlControl.Style.Add(HtmlTextWriterStyle.Display, "none");
+                    } else {
+                        htmlControl.Style.Remove(HtmlTextWriterStyle.Display);
+                    }                    
                 }
             }
         }

@@ -14,15 +14,20 @@
         <br />
         <br />
         1. Do you want to see a textbox?
-        <asp:RadioButtonList ID="rblTest" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal">
-            <asp:ListItem Text="Yes" Value="Yes" />
+        <asp:UpdatePanel ID="upnlTest" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
+            <ContentTemplate>
+        <asp:RadioButtonList ID="rblTest" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal" Enabled="false">
+            <asp:ListItem Text="Yes" Value="Yes" Selected="True" />
             <asp:ListItem Text="No" Value="No" />
         </asp:RadioButtonList>
         <br /><asp:TextBox ID="tbRBLTest" TextMode="MultiLine" Rows="3" Columns="50" runat="server" />
         <ajaxToolkit:VisibilityExtender ID="veTestRBL" ActionOnValueSelected="Show" FocusControlID="tbRBLTest" TargetControlID="tbRBLTest" TargetControlType="TextBox"
-            ParentControlID="rblTest" ParentControlType="RadiobuttonList" ValuesToCheck="Yes" runat="server" />
+            ParentControlID="rblTest" ParentControlType="RadiobuttonList" ValuesToCheck="Yes" runat="server" DisableClientEvent="true" />
+            </ContentTemplate>
+        </asp:UpdatePanel>
+
        <br /><br />2. What type of control you want to see?
-       <asp:DropDownList ID="ddlTest" runat="server">
+       <asp:DropDownList ID="ddlTest" runat="server" Enabled="false">
             <asp:ListItem Text="None" Value="none" />
             <asp:ListItem Text="Panel" Value="pnl" />
             <asp:ListItem Text="Dropdownlist" Value="ddl" />
@@ -30,7 +35,7 @@
             <asp:ListItem Text="Label" Value="lbl" />
             <asp:ListItem Text="Table" Value="tbl" />
             <asp:ListItem Text="TableRow" Value="tbr" />
-            <asp:ListItem Text="TableCell" Value="tbc" />
+            <asp:ListItem Text="TableCell" Value="tbc" Selected="True" />
        </asp:DropDownList>
         <ajaxToolkit:VisibilityExtender ID="veDDL" ActionOnValueSelected="Show" TargetControlID="pnlTest" TargetControlType="Panel"
             ParentControlID="ddlTest" ParentControlType="DropdownList" ValuesToCheck="pnl" runat="server" />

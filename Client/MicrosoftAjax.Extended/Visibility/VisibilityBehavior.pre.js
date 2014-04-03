@@ -31,7 +31,8 @@ Sys.Extended.UI.VisibilityControlType.prototype = {
     LinkButton : 6,
     TableRow : 7,
     TableCell : 8,
-    Table : 9
+    Table: 9,
+    CheckBoxList: 10
 }
 Sys.Extended.UI.VisibilityControlType.registerEnum('Sys.Extended.UI.VisibilityControlType');
 Sys.Extended.UI.VisibilityAction = function() {
@@ -54,6 +55,7 @@ Sys.Extended.UI.VisibilityBehavior = function(element) {
     
     // property values
     this._collapsed = false;    
+    this._disableClientEvent = false;
     this._parentControlType = Sys.Extended.UI.VisibilityControlType.DropdownList;
     this._targetControlType = Sys.Extended.UI.VisibilityControlType.Panel;
     this._actionOnValueSelected =  Sys.Extended.UI.VisibilityAction.Show;
@@ -77,43 +79,44 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
         if (!parentElement) {
             throw Error.argument('ParentControlID', String.format(Sys.Extended.UI.Resources.Visibility_NoControlID, this._parentControlID));
         } else if (parentElement !== null) {
-            // setup all of our handlers.
-            this._eventHandler = Function.createDelegate(this, this._toggle);
+            if (!this._disableClientEvent) {
+                this._eventHandler = Function.createDelegate(this, this._toggle);
 
-            switch (this._parentControlType) {
-                case Sys.Extended.UI.VisibilityControlType.DropdownList: //DropdownList
-                    $addHandler(parentElement, 'change', this._eventHandler);
-                    break;
-                case Sys.Extended.UI.VisibilityControlType.TextBox: //DropdownList
-                    $addHandler(parentElement, 'blur', this._eventHandler);
-                    break;
-                case Sys.Extended.UI.VisibilityControlType.RadiobuttonList:  //RadiobuttonList
-                case Sys.Extended.UI.VisibilityControlType.CheckBox: //CheckBox
-                    $addHandler(parentElement, 'click', this._eventHandler);
-                    break;
-            }
-            
-            if (this.isValueSelected()) {
-                if (this._actionOnValueSelected == Sys.Extended.UI.VisibilityAction.Show) {
-                    this._collapsed = false;
-                } else if (this._actionOnValueSelected == Sys.Extended.UI.VisibilityAction.Hide) {
-                    this._collapsed = true;
-                }
-            } else {
-                if (this._actionOnValueSelected == Sys.Extended.UI.VisibilityAction.Show) {
-                    this._collapsed = true;
-                } else if (this._actionOnValueSelected == Sys.Extended.UI.VisibilityAction.Hide) {
-                    this._collapsed = false;
+                switch (this._parentControlType) {
+                    case Sys.Extended.UI.VisibilityControlType.DropdownList: //DropdownList
+                        $addHandler(parentElement, 'change', this._eventHandler);
+                        break;
+                    case Sys.Extended.UI.VisibilityControlType.TextBox: //DropdownList
+                        $addHandler(parentElement, 'blur', this._eventHandler);
+                        break;
+                    case Sys.Extended.UI.VisibilityControlType.RadiobuttonList:  //RadiobuttonList
+                    case Sys.Extended.UI.VisibilityControlType.CheckBox: //CheckBox
+                        $addHandler(parentElement, 'click', this._eventHandler);
+                        break;
                 }
             }
+
+            //if (this.isValueSelected()) {
+            //    if (this._actionOnValueSelected == Sys.Extended.UI.VisibilityAction.Show) {
+            //        this._collapsed = false;
+            //    } else if (this._actionOnValueSelected == Sys.Extended.UI.VisibilityAction.Hide) {
+            //        this._collapsed = true;
+            //    }
+            //} else {
+            //    if (this._actionOnValueSelected == Sys.Extended.UI.VisibilityAction.Show) {
+            //        this._collapsed = true;
+            //    } else if (this._actionOnValueSelected == Sys.Extended.UI.VisibilityAction.Hide) {
+            //        this._collapsed = false;
+            //    }
+            //}
             
-            // setup the initial size and state
-            var e = this.get_element();
-            if (this._collapsed) {
-                e.style.display = 'none';
-            } else {            
-                e.style.display = '';
-            } 
+            //// setup the initial size and state
+            //var e = this.get_element();
+            //if (this._collapsed) {
+            //    e.style.display = 'none';
+            //} else {            
+            //    e.style.display = '';
+            //} 
         }
     },
     
@@ -260,6 +263,11 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
             case 'input':
                 switch (control.type.toLowerCase()) {
                     case 'checkbox':
+                        if (control.checked) {
+                            //control.checked = false;
+                            this.raiseControlEvent(control);
+                        }
+                        break;
                     case 'radio':
                         //Uncheck the control, and raise the click event. 
                         //These controls have click event handlers which do not run automatically
@@ -304,6 +312,8 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
             case 'input':
                 switch (control.type.toLowerCase()) {
                     case 'checkbox':
+                        $common.tryFireEvent(control, "click");
+                        break;
                     case 'radio':
                          $common.tryFireEvent(control, "click");
                         break;
@@ -345,43 +355,54 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
         var valueFound = false;
         var parentElement = $get(this._parentControlID);
         var i = 0;
-        
-        outerloop:
+
         if (parentElement !== null) {
             switch (this._parentControlType) {
-                case Sys.Extended.UI.VisibilityControlType.DropdownList: //DropdownList
+                case Sys.Extended.UI.VisibilityControlType.DropdownList:
                     if (values.length > 0) {
                         for(i = 0; i < values.length; i++){
                             if (parentElement.value == values[i]) {
-                                valueFound = true;
-                                break outerloop; //break all the loops
+                                return true;
                             }
                         }
                     }
                     break;
-                case Sys.Extended.UI.VisibilityControlType.RadiobuttonList:  //RadiobuttonList
+                case Sys.Extended.UI.VisibilityControlType.RadiobuttonList:
                     if (values.length > 0) {
-                        var inputNodes = parentElement.getElementsByTagName('INPUT');            
+                        var inputNodes = parentElement.getElementsByTagName('INPUT');
                         for (i = 0; i < inputNodes.length; i++) {
-                            if ((inputNodes[i]) && (inputNodes[i].type = 'radio')  && (inputNodes[i].checked)) {
-                                for(j = 0; j < values.length; j++) {
+                            if ((inputNodes[i]) && (inputNodes[i].type = 'radio') && (inputNodes[i].checked)) {
+                                for (j = 0; j < values.length; j++) {
                                     if (inputNodes[i].value == values[j]) {
-                                        valueFound = true;
-                                        break outerloop; //break all the loops
+                                        return true;
                                     }
                                 }
                             }
                         }
                     }
                     break;
-                case Sys.Extended.UI.VisibilityControlType.CheckBox: //CheckBox
+                case Sys.Extended.UI.VisibilityControlType.CheckBoxList:
+                    if (values.length > 0) {
+                        var inputNodes = parentElement.getElementsByTagName('INPUT');
+                        for (i = 0; i < inputNodes.length; i++) {
+                            if ((inputNodes[i]) && (inputNodes[i].type = 'checkbox') && (inputNodes[i].checked)) {
+                                for (j = 0; j < values.length; j++) {
+                                    if (inputNodes[i].value == values[j]) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case Sys.Extended.UI.VisibilityControlType.CheckBox:
                     if ((parentElement) && (parentElement.checked)) {
-                        valueFound = true;
+                        return true;
                     }
                     break;
             }
         }
-        return valueFound;
+        return false;
     },
     add_valueChanged : function(handler) {
         /// <summary>
@@ -433,6 +454,18 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
         else {
             this._collapsed = value;
             this.raisePropertyChanged('Collapsed');
+        }
+    },
+    get_DisableClientEvent: function () {
+        /// <value type="Boolean">
+        /// Whether or not to disable client actions
+        /// </value>
+        return this._disableClientEvent;
+    },
+    set_DisableClientEvent: function (value) {
+        if (this._disableClientEvent != value) {
+            this._disableClientEvent = value;
+            this.raisePropertyChanged('disableClientEvent');
         }
     },
 
