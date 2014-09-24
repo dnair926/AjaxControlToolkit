@@ -91,6 +91,7 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
                         break;
                     case Sys.Extended.UI.VisibilityControlType.RadiobuttonList:  //RadiobuttonList
                     case Sys.Extended.UI.VisibilityControlType.CheckBox: //CheckBox
+                    case Sys.Extended.UI.VisibilityControlType.CheckBoxList:
                         $addHandler(parentElement, 'click', this._eventHandler);
                         break;
                 }
@@ -137,6 +138,7 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
                     break;
                 case Sys.Extended.UI.VisibilityControlType.RadiobuttonList:
                 case Sys.Extended.UI.VisibilityControlType.CheckBox:
+                case Sys.Extended.UI.VisibilityControlType.CheckBoxList:
                     $removeHandler(parentElement, 'click', this._eventHandler);
                     break;
             }

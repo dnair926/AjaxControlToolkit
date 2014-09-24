@@ -62,10 +62,11 @@ namespace AjaxControlToolkit {
                 if (value == VisibilityControlType.CheckBox |
                     value == VisibilityControlType.DropdownList |
                     value == VisibilityControlType.RadiobuttonList |
-                    value == VisibilityControlType.RadioButton) {
+                    value == VisibilityControlType.RadioButton |
+                    value == VisibilityControlType.CheckBoxList) {
                     SetPropertyValue("ParentControlType", value);
                 } else {
-                    throw new InvalidEnumArgumentException(string.Format("ParentControlType value specified for VisibilityExtender with ID {0} is invalid. Allowed values are: CheckBox, DropdownList, Radiobutton, or RadiobutonList.", this.ID));
+                    throw new InvalidEnumArgumentException(string.Format("ParentControlType value specified for VisibilityExtender with ID {0} is invalid. Allowed values are: CheckBox, DropdownList, CheckBoxList, or RadiobuttonList.", this.ID));
                 }
             }
         }
@@ -135,19 +136,30 @@ namespace AjaxControlToolkit {
                     valueArray = new List<string>(valueList.Split(",".ToCharArray()));
                 }
                 bool valueSelected = false;
-                using (Control parentControl = this.FindControl(this.ParentControlID)) {
-                    using (CheckBox cb = parentControl as CheckBox) {
-                        if (cb != null) {
-                            valueSelected = cb.Checked;
-                        } else if (valueArray.Count > 0) {
-                            using (ListControl listControl = parentControl as ListControl) {
-                                if (listControl != null) {
-                                    valueSelected = valueArray.Contains(listControl.SelectedValue);
+                using (Control parentControl = this.FindControl(this.ParentControlID))
+                using (CheckBox cb = parentControl as CheckBox) {
+                    if (cb != null) {
+                        valueSelected = cb.Checked;
+                    } else if (valueArray.Count > 0) {
+                        if (ParentControlType == VisibilityControlType.DropdownList) {
+                            DropDownList ddl = (DropDownList)parentControl;
+                            valueSelected = valueArray.Contains(ddl.SelectedValue);
+                        } else if (ParentControlType == VisibilityControlType.RadiobuttonList) {
+                            RadioButtonList rbl = (RadioButtonList)parentControl;
+                            valueSelected = valueArray.Contains(rbl.SelectedValue);
+                        } else if (ParentControlType == VisibilityControlType.CheckBoxList) {
+                            CheckBoxList checkBoxList = parentControl as CheckBoxList;
+                            if (checkBoxList != null) {
+                                foreach (ListItem listItem in checkBoxList.Items) {
+                                    if (listItem.Selected && valueArray.Contains(listItem.Value)) {
+                                        valueSelected = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
-                        collapse = (valueSelected && ActionOnValueSelected == VisibilityMode.Hide) || (!valueSelected && ActionOnValueSelected == VisibilityMode.Show);
                     }
+                    collapse = (valueSelected && ActionOnValueSelected == VisibilityMode.Hide) || (!valueSelected && ActionOnValueSelected == VisibilityMode.Show);
                 }
             } else {
                 collapse = true;
