@@ -117,7 +117,7 @@ Sys.Extended.UI.CollapsiblePanelBehavior.prototype = {
         if (this._collapsed) {
             this._setTargetSize(this._getCollapsedSize());            
         } else {            
-            this._setTargetSize(this._getExpandedSize());
+            //this._setTargetSize(this._getExpandedSize());
         } 
         
         this._setupState(this._collapsed);
