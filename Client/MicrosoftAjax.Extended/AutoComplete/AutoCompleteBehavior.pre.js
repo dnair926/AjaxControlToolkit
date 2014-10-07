@@ -577,15 +577,7 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         var control = this.get_element();
         if (control) {
             var text = this._currentCompletionWord();
-            var myKeyCode = 0;
-
-            if (document.all) {
-                // Internet Explorer 4+
-                myKeyCode = ev.keyCode;
-            } else if (document.getElementById) {
-                // Mozilla / Opera / etc.
-                myKeyCode = ev.which;
-            }
+            var myKeyCode = ev.keyCode ? ev.keyCode : ev.rawEvent.keyCode;
 
             //Only Show image if the key pressed is not: an arrow button, or Enter
             //Thanks to Dmitry for doing his scrolling with arrow buttons and selecting by hitting Enter.
