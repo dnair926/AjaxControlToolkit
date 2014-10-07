@@ -136,31 +136,30 @@ namespace AjaxControlToolkit {
                     valueArray = new List<string>(valueList.Split(",".ToCharArray()));
                 }
                 bool valueSelected = false;
-                using (Control parentControl = this.FindControl(this.ParentControlID))
-                using (CheckBox cb = parentControl as CheckBox) {
-                    if (cb != null) {
-                        valueSelected = cb.Checked;
-                    } else if (valueArray.Count > 0) {
-                        if (ParentControlType == VisibilityControlType.DropdownList) {
-                            DropDownList ddl = (DropDownList)parentControl;
-                            valueSelected = valueArray.Contains(ddl.SelectedValue);
-                        } else if (ParentControlType == VisibilityControlType.RadiobuttonList) {
-                            RadioButtonList rbl = (RadioButtonList)parentControl;
-                            valueSelected = valueArray.Contains(rbl.SelectedValue);
-                        } else if (ParentControlType == VisibilityControlType.CheckBoxList) {
-                            CheckBoxList checkBoxList = parentControl as CheckBoxList;
-                            if (checkBoxList != null) {
-                                foreach (ListItem listItem in checkBoxList.Items) {
-                                    if (listItem.Selected && valueArray.Contains(listItem.Value)) {
-                                        valueSelected = true;
-                                        break;
-                                    }
+                Control parentControl = this.FindControl(this.ParentControlID);
+                CheckBox cb = parentControl as CheckBox;
+                if (cb != null) {
+                    valueSelected = cb.Checked;
+                } else if (valueArray.Count > 0) {
+                    if (ParentControlType == VisibilityControlType.DropdownList) {
+                        DropDownList ddl = (DropDownList)parentControl;
+                        valueSelected = valueArray.Contains(ddl.SelectedValue);
+                    } else if (ParentControlType == VisibilityControlType.RadiobuttonList) {
+                        RadioButtonList rbl = (RadioButtonList)parentControl;
+                        valueSelected = valueArray.Contains(rbl.SelectedValue);
+                    } else if (ParentControlType == VisibilityControlType.CheckBoxList) {
+                        CheckBoxList checkBoxList = parentControl as CheckBoxList;
+                        if (checkBoxList != null) {
+                            foreach (ListItem listItem in checkBoxList.Items) {
+                                if (listItem.Selected && valueArray.Contains(listItem.Value)) {
+                                    valueSelected = true;
+                                    break;
                                 }
                             }
                         }
                     }
-                    collapse = (valueSelected && ActionOnValueSelected == VisibilityMode.Hide) || (!valueSelected && ActionOnValueSelected == VisibilityMode.Show);
                 }
+                collapse = (valueSelected && ActionOnValueSelected == VisibilityMode.Hide) || (!valueSelected && ActionOnValueSelected == VisibilityMode.Show);
             } else {
                 collapse = true;
             }
@@ -168,8 +167,10 @@ namespace AjaxControlToolkit {
             using (WebControl webControl = this.TargetControl as WebControl) {
                 if (webControl != null) {
                     if (collapse) {
+                        webControl.Style.Add("display", "none");
                         webControl.Style.Add(HtmlTextWriterStyle.Display, "none");
                     } else {
+                        webControl.Style.Remove("display");
                         webControl.Style.Remove(HtmlTextWriterStyle.Display);
                     }
                     return;
@@ -180,12 +181,15 @@ namespace AjaxControlToolkit {
             using (HtmlControl htmlControl = this.TargetControl as HtmlControl) {
                 if (htmlControl != null) {
                     if (collapse) {
+                        htmlControl.Style.Add("display", "none");
                         htmlControl.Style.Add(HtmlTextWriterStyle.Display, "none");
                     } else {
+                        htmlControl.Style.Remove("display");
                         htmlControl.Style.Remove(HtmlTextWriterStyle.Display);
                     }                    
                 }
             }
         }
+
     }
 }
