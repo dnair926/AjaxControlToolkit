@@ -82,7 +82,7 @@ Sys.Extended.UI.AutoCompleteBehavior = function(element) {
     this._enableSelection = true;
     this._ValueHiddenFieldID = null;
     this._TextHiddenFieldID = null;
-    this._completionListAltItemCssClass = null;
+    //this._completionListAltItemCssClass = null;
     //END------------------------------------------------------------------------
 
 }
@@ -994,10 +994,10 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
             var dispText = null;
             var error = false;
 
-            //If Alt Item css class is not provided, use Item css class
-            if (!this.get_completionListAltItemCssClass()) {
-                this.set_completionListAltItemCssClass(this.get_completionListItemCssClass());
-            }
+            ////If Alt Item css class is not provided, use Item css class
+            //if (!this.get_completionListAltItemCssClass()) {
+            //    this.set_completionListAltItemCssClass(this.get_completionListItemCssClass());
+            //}
             //END-------------------------------------------------------           
 
             for (var i = 0; i < completionItems.length; i++) {
@@ -1081,13 +1081,8 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
                 var isEven = (i % 2 == 0);
                 //END------------------------------------------------------- 
 
-                //START------------------------------------------------------- 
-                // DN 8/19/13 : Handle alternate item style.
-                if (isEven && this._completionListItemCssClass) {
+                if (this._completionListItemCssClass) {
                     Sys.UI.DomElement.addCssClass(itemElement, this._completionListItemCssClass);
-                } else if ((!isEven && this._completionListAltItemCssClass) || this._completionListItemCssClass) {
-                    Sys.UI.DomElement.addCssClass(itemElement, this._completionListAltItemCssClass);
-                //END------------------------------------------------------- 
                 } else {
                     var itemElementStyle = itemElement.style;
                     itemElementStyle.padding = '0px';
@@ -1406,18 +1401,18 @@ Sys.Extended.UI.AutoCompleteBehavior.prototype = {
         }
     },
 
-    get_completionListAltItemCssClass: function () {
-        /// <value type="String" maybeNull="true">
-        /// Css class name that will be used to style an item in the completion list.
-        /// </value>
-        return this._completionListAltItemCssClass;
-    },
-    set_completionListAltItemCssClass: function (value) {
-        if (this._completionListAltItemCssClass != value) {
-            this._completionListAltItemCssClass = value;
-            this.raisePropertyChanged('completionListAltItemCssClass');
-        }
-    },
+    //get_completionListAltItemCssClass: function () {
+    //    /// <value type="String" maybeNull="true">
+    //    /// Css class name that will be used to style an item in the completion list.
+    //    /// </value>
+    //    return this._completionListAltItemCssClass;
+    //},
+    //set_completionListAltItemCssClass: function (value) {
+    //    if (this._completionListAltItemCssClass != value) {
+    //        this._completionListAltItemCssClass = value;
+    //        this.raisePropertyChanged('completionListAltItemCssClass');
+    //    }
+    //},
 
     //END----------------------------------------------------------------------------    
     

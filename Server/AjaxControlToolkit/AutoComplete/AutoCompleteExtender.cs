@@ -137,17 +137,17 @@ namespace AjaxControlToolkit
             get { return GetPropertyValue("OnValueChanged", string.Empty); }
             set { SetPropertyValue("OnValueChanged", value); }
         }
-        /// <summary>
-        /// Css Class that will be used to style alternating item in the autocomplete list.
-        /// </summary>
-        [DefaultValue("")]
-        [ExtenderControlProperty]
-        [ClientPropertyName("completionListAltItemCssClass")]
-        public string CompletionListAltItemCssClass
-        {
-            get { return GetPropertyValue("CompletionListAltItemCssClass", ""); }
-            set { SetPropertyValue("CompletionListAltItemCssClass", value); }
-        }
+        ///// <summary>
+        ///// Css Class that will be used to style alternating item in the autocomplete list.
+        ///// </summary>
+        //[DefaultValue("")]
+        //[ExtenderControlProperty]
+        //[ClientPropertyName("completionListAltItemCssClass")]
+        //public string CompletionListAltItemCssClass
+        //{
+        //    get { return GetPropertyValue("CompletionListAltItemCssClass", ""); }
+        //    set { SetPropertyValue("CompletionListAltItemCssClass", value); }
+        //}
         //-----------------------------------------------------------------------------------------------------
 
         /// <summary>
