@@ -8,6 +8,7 @@ using System.Web.UI.WebControls;
 #region [ Resources ]
 
 [assembly: System.Web.UI.WebResource("CharCount.CharCountBehavior.js", "text/javascript")]
+[assembly: System.Web.UI.WebResource("CharCount.CharCountBehavior.debug.js", "text/javascript")]
 [assembly: System.Web.UI.WebResource("CharCount.CharCount_resource.css", "text/css", PerformSubstitution = true)]
 
 #endregion

@@ -13,7 +13,8 @@ Sys.Extended.UI.ClientSideTargetControlType.prototype = {
     DropdownList : 0,
     RadiobuttonList : 1,
     CheckBox : 2,
-    TextBox : 3
+    TextBox: 3,
+    CheckBoxList : 4
 }
 Sys.Extended.UI.ClientSideTargetControlType.registerEnum('Sys.Extended.UI.ClientSideTargetControlType');
 
@@ -45,14 +46,15 @@ Sys.Extended.UI.ClientSideBehavior.prototype = {
         this._eventHandler = Function.createDelegate(this, this.userActionEvent);
 
         switch (this._targetControlType) {
-            case Sys.Extended.UI.ClientSideTargetControlType.DropdownList: //DropdownList
+            case Sys.Extended.UI.ClientSideTargetControlType.DropdownList:
                 $addHandler(element, 'change', this._eventHandler);
                 break;
-            case Sys.Extended.UI.ClientSideTargetControlType.TextBox: //TextBox
+            case Sys.Extended.UI.ClientSideTargetControlType.TextBox: 
                 $addHandler(element, 'blur', this._eventHandler);
                 break;
-            case Sys.Extended.UI.ClientSideTargetControlType.RadiobuttonList:  //RadiobuttonList
-            case Sys.Extended.UI.ClientSideTargetControlType.CheckBox: //CheckBox
+            case Sys.Extended.UI.ClientSideTargetControlType.RadiobuttonList: 
+            case Sys.Extended.UI.ClientSideTargetControlType.CheckBox:
+            case Sys.Extended.UI.ClientSideTargetControlType.CheckBoxList: 
                 $addHandler(element, 'click', this._eventHandler);
                 break;
         }
@@ -69,14 +71,15 @@ Sys.Extended.UI.ClientSideBehavior.prototype = {
 
         if (this._eventHandler) {
             switch (this._targetControlType) {
-                case Sys.Extended.UI.ClientSideTargetControlType.DropdownList: //DropdownList
+                case Sys.Extended.UI.ClientSideTargetControlType.DropdownList:
                     $removeHandler(element, 'change', this._eventHandler);
                     break;
-                case Sys.Extended.UI.ClientSideTargetControlType.TextBox: //DropdownList
+                case Sys.Extended.UI.ClientSideTargetControlType.TextBox:
                     $removeHandler(element, 'blur', this._eventHandler);
                     break;
-                case Sys.Extended.UI.ClientSideTargetControlType.RadiobuttonList:  //RadiobuttonList
-                case Sys.Extended.UI.ClientSideTargetControlType.CheckBox: //CheckBox
+                case Sys.Extended.UI.ClientSideTargetControlType.RadiobuttonList: 
+                case Sys.Extended.UI.ClientSideTargetControlType.CheckBox:
+                case Sys.Extended.UI.ClientSideTargetControlType.CheckBoxList:
                     $removeHandler(element, 'click', this._eventHandler);
                     break;
             }
@@ -93,8 +96,12 @@ Sys.Extended.UI.ClientSideBehavior.prototype = {
         }
     },
     
-    userActionEvent : function() {
-        var eventArgs = new Sys.CancelEventArgs();
+    userActionEvent : function(eventObj) {
+    	if (eventObj.target.tagName === 'LABEL') {
+    		return;
+    	}
+
+    	var eventArgs = new Sys.CancelEventArgs();
         this.raiseuserAction(eventArgs);
         if (eventArgs.get_cancel()) {
             return;

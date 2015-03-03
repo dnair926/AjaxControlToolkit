@@ -771,87 +771,6 @@ Sys.Extended.UI._CommonToolkitScripts.prototype = {
         }
     },
 
-    //-------------------------------------------------------------------------------   
-    // DN: 10/15: Utility method to clear controls inside a container.
-    clearControls: function (element) {
-        /// <summary>
-        /// Clear controls inside a container.
-        /// </summary>
-        /// <param name="element" type="Sys.UI.DomElement" domElement="true">
-        /// Element
-        /// </param>
-
-        // Note: reference to CommonToolkitScripts must be left intact (i.e. don't
-        // replace with 'this') because this function will be aliased
-
-        var tags = ['INPUT', 'SELECT', 'TEXTAREA'];
-        var j = 0, nodes;
-        var nodeCount;
-        for (j = 0; j < tags.length; j++) {
-            nodes = element.getElementsByTagName(tags[j]);
-            nodeCount = nodes.length;
-            for (i = 0; i < nodeCount; i++) {
-                this.clearControl(nodes[i]);
-            }
-        }        
-    },
-
-    clearControl: function (element) {
-        /// <summary>
-        /// Clear value of a control        
-        /// </summary>
-        /// <param name="element" type="Sys.UI.DomElement" domElement="true">
-        /// Element
-        /// </param>
-        switch (element.tagName.toLowerCase()) {
-            case 'input':
-                switch (element.type.toLowerCase()) {
-                    case 'checkbox':
-                    case 'radio':
-                        element.disabled = false;
-                        if (element.checked) {
-                            element.checked = false;
-                        }
-                        break;
-                    case 'text':
-                    case 'password':
-                    case 'hidden':
-                        //Just clear the value. No need to raise any event. 
-                        //If this control is getting cleared that means some other control was clicked or changed 
-                        //and the focus shifted to that control and the blur event of this contol will run automatically.
-                        if (element.value.trim() !== '') {
-                            element.value = '';
-                        }
-                        if (element.type.toLowerCase() == 'text') {
-                            element.disabled = false;
-                        }
-                        break;
-                }
-                break;
-            case 'textarea':
-                //Just clear the value. No need to raise any event. 
-                //If this control is getting cleared that means some other control was clicked or changed 
-                //and the focus shifted to that control and the blur event of this contol will run automatically.
-                if (element.value.trim() !== '') {
-                    element.value = '';
-                }
-                element.disabled = false;
-                break;
-            case 'select':
-                //Select the first item from the list. No need to raise any event. 
-                //The "change" event of this control will run automatically after the index is changed to the first item.
-                //Should not touch the dropdowns on the calendar extender, it will cause the calendar to open. (CalendarExtender was modified to add Year and Month dropdowns)
-                if ((element.id.indexOf("_monthSelect") == -1) && (element.id.indexOf("_yearSelect") == -1)) {
-                    element.disabled = false;
-                    if (element.selectedIndex !== 0) {
-                        element.selectedIndex = 0;
-                    }
-                }
-                break;
-        }
-    },
-    //-----------------------------------------------------------------------------
-
     resolveFunction: function(value) {
         /// <summary>
         /// Returns a function reference that corresponds to the provided value
@@ -1088,20 +1007,28 @@ Sys.Extended.UI._CommonToolkitScripts.prototype = {
         /// <returns type="Boolean">True if the event was successfully fired, otherwise false</returns>
 
         try {
-            if (document.createEventObject) {
-                var e = document.createEventObject();
-                $common.applyProperties(e, properties || {});
-                element.fireEvent("on" + eventName, e);
+            var def = $common.__DOMEvents[eventName];
+            if (def) {
+                var e = document.createEvent(def.eventGroup);
+                def.init(e, properties || {});
+                element.dispatchEvent(e);
                 return true;
-            } else if (document.createEvent) {
-                var def = $common.__DOMEvents[eventName];
-                if (def) {
-                    var e = document.createEvent(def.eventGroup);
-                    def.init(e, properties || {});
-                    element.dispatchEvent(e);
-                    return true;
-                }
             }
+
+            //if (document.createEventObject) {
+            //    var e = document.createEventObject();
+            //    $common.applyProperties(e, properties || {});
+            //    element.fireEvent("on" + eventName, e);
+            //    return true;
+            //} else if (document.createEvent) {
+            //    var def = $common.__DOMEvents[eventName];
+            //    if (def) {
+            //        var e = document.createEvent(def.eventGroup);
+            //        def.init(e, properties || {});
+            //        element.dispatchEvent(e);
+            //        return true;
+            //    }
+            //}
         } catch (e) {
         }
         return false;
@@ -1123,14 +1050,14 @@ Sys.Extended.UI._CommonToolkitScripts.prototype = {
 
         for (i = 0; i < tagsCount; i++) {
             elements = container.getElementsByTagName(tagsToClear[i]);
-            if (!isValidObject(elements)) {
+            if (typeof elements === "undefined" && elements !== null) {
                 continue;
             }
 
             elementCount = elements.length;
             for (j = 0; j < elementCount; j++) {
                 element = elements[j];
-                clearControl(element);
+                this.clearControl(element);
             }
         }
     },
@@ -1155,6 +1082,7 @@ Sys.Extended.UI._CommonToolkitScripts.prototype = {
                         break;
                     case 'text':
                     case 'password':
+                    case 'hidden':
                         //Just clear the value. No need to raise any event. 
                         //If this control is getting cleared that means some other control was clicked or changed 
                         //and the focus shifted to that control and the blur event of this contol will run automatically.

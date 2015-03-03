@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 [assembly: WebResource("CapsLock.CapsLockBehavior.js", "text/javascript")]
+[assembly: WebResource("CapsLock.CapsLockBehavior.debug.js", "text/javascript")]
 [assembly: WebResource("CapsLock.CapsLock_resource.css", "text/css", PerformSubstitution = true)]
 [assembly: WebResource("CapsLock.alert-large.gif", "image/gif")]
 [assembly: WebResource("CapsLock.alert-small.gif", "image/gif")]

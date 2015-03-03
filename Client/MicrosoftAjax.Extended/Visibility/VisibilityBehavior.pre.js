@@ -190,7 +190,12 @@ Sys.Extended.UI.VisibilityBehavior.prototype = {
         /// </summary>
         /// <param name="eventObj" type="Sys.UI.DomEvent" mayBeNull="true" optional="true">
         /// Event Info
-        /// </param>          
+    	/// </param>
+
+    	if (eventObj.target.tagName === 'LABEL') {
+    		return;
+    	}
+
         this.changeControlMode();
         this.raiseValueChanged(new Sys.EventArgs());
     },

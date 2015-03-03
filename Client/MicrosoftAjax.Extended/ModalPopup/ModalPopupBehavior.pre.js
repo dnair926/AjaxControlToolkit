@@ -540,7 +540,7 @@ Sys.Extended.UI.ModalPopupBehavior.prototype = {
         //-----------------------------------------------------------------------------------------        
         // DN: 10/15: Clear controls on hide, if specified. Clear the Client State indicating that the popup is hidden.
         if (this.get_ClearControlsOnHiding() == true) {
-            $common.clearControls(this._popupElement);
+            $common.clearInputElementsInsideContainer(this._popupElement);
         }
         this.set_ClientState(null);
         //-----------------------------------------------------------------------------------------        

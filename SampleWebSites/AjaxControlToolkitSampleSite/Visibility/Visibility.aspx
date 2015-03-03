@@ -13,10 +13,14 @@
             Visibility Demonstration</div>
         <br />
         <br />
+        <asp:CheckBox ID="cbVisibility" Text="Start Test" runat="server" />
+        <ajaxToolkit:VisibilityExtender ID="veStart" ActionOnValueSelected="Show" ParentControlID="cbVisibility" ParentControlType="CheckBox"
+            TargetControlID="pnlVisibility" TargetControlType="Panel" runat="server" />
+        <asp:Panel id="pnlVisibility" runat="server">
         1. Do you want to see a textbox?
         <asp:UpdatePanel ID="upnlTest" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
             <ContentTemplate>
-        <asp:RadioButtonList ID="rblTest" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal" Enabled="false">
+        <asp:RadioButtonList ID="rblTest" runat="server" RepeatLayout="Flow" RepeatDirection="Horizontal">
             <asp:ListItem Text="Yes" Value="Yes" Selected="True" />
             <asp:ListItem Text="No" Value="No" />
         </asp:RadioButtonList>
@@ -27,7 +31,7 @@
         </asp:UpdatePanel>
 
        <br /><br />2. What type of control you want to see?
-       <asp:DropDownList ID="ddlTest" runat="server" Enabled="false">
+       <asp:DropDownList ID="ddlTest" runat="server">
             <asp:ListItem Text="None" Value="none" />
             <asp:ListItem Text="Panel" Value="pnl" />
             <asp:ListItem Text="Dropdownlist" Value="ddl" />
@@ -75,6 +79,7 @@
         <table><tr runat="server" id="trTest"><td>Table Row Test</td></tr></table>
         <table runat="server" id="tblTest" style="border:2px solid #000;"><tr><td>Test Table</td></tr></table>
         <br /><br /><asp:Button ID="btnPostbackTest" Text="Test Postback" runat="server" />
+        </asp:Panel>
     </div>
     <div class="demobottom">
     </div>
